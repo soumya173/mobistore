@@ -19,7 +19,10 @@ app.config["DEBUG"] = True
 """
 @app.route('/user/list', methods=['GET'])
 def list_all_user():
+    if request.method not in ['GET']:
+        return jsonify({"message": "Method not allowed"}), 405
     handler = dbhandler.Dbhandler()
+    # Fetch all users
     query = 'SELECT * FROM users;'
     output = handler.fetch(query)
     return jsonify(output), 200
@@ -34,8 +37,12 @@ def list_all_user():
 """
 @app.route('/user/add', methods=['POST'])
 def add_new_user():
+    if request.method not in ['POST']:
+        return jsonify({"message": "Method not allowed"}), 405
     handler = dbhandler.Dbhandler()
     content = request.json
+    # TODO: Validate duplicate user before create
+    # Create user
     query = "INSERT INTO users (`firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified`) VALUES('{}', '{}', '{}', '{}', '{}', now(), now())".format(
                     content['firstname'],
                     content['lastname'],
@@ -73,8 +80,12 @@ def add_new_user():
 """
 @app.route('/user/modify', methods=['PUT'])
 def modify_user():
+    if request.method not in ['PUT']:
+        return jsonify({"message": "Method not allowed"}), 405
     handler = dbhandler.Dbhandler()
     content = request.json
+    # TODO: Validate if user exists
+    # Modify user
     query = "UPDATE users SET `firstname`='{}', `lastname`='{}', `email`='{}', `mobile`='{}', `type`='{}', `modified`=now() WHERE userid={}".format(
                     content['firstname'],
                     content['lastname'],
@@ -113,8 +124,12 @@ def modify_user():
 """
 @app.route('/user/delete', methods=['DELETE'])
 def delete_user():
+    if request.method not in ['DELETE']:
+        return jsonify({"message": "Method not allowed"}), 405
     handler = dbhandler.Dbhandler()
     content = request.json
+    # Validate if user exists
+    # Delete user
     query = "DELETE FROM users WHERE `type`='{}' AND `userid`='{}'".format(
                     content['type'],
                     content['userid'])
@@ -143,9 +158,13 @@ def delete_user():
     Returns:
         - 200 with success message
 """
-@app.route('/user/populate', methods=['GET'])
+@app.route('/user/populate', methods=['POST'])
 def populate_db():
+    if request.method not in ['POST']:
+        return jsonify({"message": "Method not allowed"}), 405
     handler = dbhandler.Dbhandler()
+
+    # Populating users table
     for i in range(20):
         fname = ''.join([random.choice(string.ascii_lowercase) for _ in range(10)])
         lname = ''.join([random.choice(string.ascii_lowercase) for _ in range(10)])
@@ -154,6 +173,31 @@ def populate_db():
         typ = 'admin'
 
         query = "INSERT INTO users (`firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified`) VALUES('{}', '{}', '{}', '{}', '{}', now(), now())".format(fname, lname, email, mobile, typ)
+        res = handler.execute(query)
+
+    # Populating products table
+    getquery = "SELECT `userid` FROM users LIMIT 1"
+    output = handler.fetch(getquery)
+    addedby = output[0]['userid']
+    for i in range(20):
+        name = ''.join([random.choice(string.ascii_lowercase) for _ in range(10)])
+        typ = ''.join([random.choice(string.ascii_lowercase) for _ in range(5)])
+        price = ''.join([random.choice(string.digits) for _ in range(3)])
+        description = ''.join([random.choice(string.ascii_lowercase) for _ in range(20)])
+        instock = 1
+
+        query = "INSERT INTO products (`name`, `type`, `price`, `description`, `instock`, `created`, `modified`, `addedby`) VALUES('{}', '{}', '{}', '{}', '{}', now(), now(), '{}')".format(name, typ, price, description, instock, addedby)
+        res = handler.execute(query)
+
+    # Populating offers table
+    getquery = "SELECT `productid` FROM products LIMIT 1"
+    output = handler.fetch(getquery)
+    productid = output[0]['productid']
+    for i in range(20):
+        description = ''.join([random.choice(string.ascii_lowercase) for _ in range(20)])
+        discount = ''.join([random.choice(string.digits) for _ in range(2)])
+
+        query = "INSERT INTO offers (`productid`, `addedby`, `discount`, `description`, `from`, `to`) VALUES('{}', '{}', '{}', '{}', now(), now())".format(productid, addedby, discount, description)
         res = handler.execute(query)
     return jsonify({'message': 'DB populated'}), 200
 

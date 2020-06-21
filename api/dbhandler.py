@@ -32,6 +32,8 @@ class Dbhandler(object):
 
             cursor.close()
         except Exception as e:
+            print("Exception in execute")
+            print(e)
             return False
         return True
 
@@ -57,6 +59,8 @@ class Dbhandler(object):
                     result[col] = val
                 results.append(result)
         except Exception as e:
+            print("Exception in fetch")
+            print(e)
             results = []
 
         return results
