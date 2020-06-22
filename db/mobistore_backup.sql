@@ -6,7 +6,7 @@ CREATE TABLE `users` (
   `mobile` bigint DEFAULT null,
   `type` varchar(255) NOT NULL,
   `created` timestamp NOT NULL,
-  `modified` timestamp DEFAULT (now())
+  `modified` timestamp DEFAULT (now()),
   CONSTRAINT email_unique UNIQUE (email)
 );
 
