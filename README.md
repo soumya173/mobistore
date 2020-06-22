@@ -31,3 +31,5 @@ Note2: Currently the process is manual, will try automating the setup later
 - Useful commands
   - pip install flask
   - pip install mysql-connector-python
+- Useful links
+  - https://dbdiagram.io/
