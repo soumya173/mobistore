@@ -23,7 +23,7 @@ def list_all_user():
         return jsonify({"message": "Method not allowed"}), 405
     handler = dbhandler.Dbhandler()
     # Fetch all users
-    query = 'SELECT * FROM users;'
+    query = 'SELECT `userid`, `firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified` FROM users;'
     output = handler.fetch(query)
     return jsonify(output), 200
 
@@ -43,7 +43,8 @@ def add_new_user():
     content = request.json
     # TODO: Validate duplicate user before create
     # Create user
-    query = "INSERT INTO users (`firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified`) VALUES('{}', '{}', '{}', '{}', '{}', now(), now())".format(
+    query = "INSERT INTO users (`password`, `firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified`) VALUES('{}', '{}', '{}', '{}', '{}', '{}', now(), now())".format(
+                    content['password'],
                     content['firstname'],
                     content['lastname'],
                     content['email'],
@@ -52,7 +53,7 @@ def add_new_user():
     res = handler.execute(query)
     if res:
         # Verify the user got created
-        getquery = "SELECT * FROM users WHERE `firstname`='{}' AND `lastname`='{}' AND `email`='{}' AND `mobile`='{}' AND `type`='{}'".format(
+        getquery = "SELECT `userid`, `firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified` FROM users WHERE `firstname`='{}' AND `lastname`='{}' AND `email`='{}' AND `mobile`='{}' AND `type`='{}'".format(
                     content['firstname'],
                     content['lastname'],
                     content['email'],
@@ -86,7 +87,8 @@ def modify_user():
     content = request.json
     # TODO: Validate if user exists
     # Modify user
-    query = "UPDATE users SET `firstname`='{}', `lastname`='{}', `email`='{}', `mobile`='{}', `type`='{}', `modified`=now() WHERE userid={}".format(
+    query = "UPDATE users SET `password`, `firstname`='{}', `lastname`='{}', `email`='{}', `mobile`='{}', `type`='{}', `modified`=now() WHERE userid={}".format(
+                    content['password'],
                     content['firstname'],
                     content['lastname'],
                     content['email'],
@@ -96,7 +98,8 @@ def modify_user():
     res = handler.execute(query)
     if res:
         # Verify that the user modified
-        getquery = "SELECT * FROM users WHERE `firstname`='{}' AND `lastname`='{}' AND `email`='{}' AND `mobile`='{}' AND `type`='{}'".format(
+        getquery = "SELECT `userid`, `firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified` FROM users WHERE `userid`='{}' AND `firstname`='{}' AND `lastname`='{}' AND `email`='{}' AND `mobile`='{}' AND `type`='{}'".format(
+                    content['userid'],
                     content['firstname'],
                     content['lastname'],
                     content['email'],
@@ -107,7 +110,7 @@ def modify_user():
             response = output
             rescode = 200
         else:
-            response = {'message': 'Failed to modify user'}
+            response = {'message': 'Failed to modify user, multiple rows received'}
             rescode = 400
     else:
         response = {'message': 'Failed to modify user'}
@@ -136,15 +139,15 @@ def delete_user():
     res = handler.execute(query)
     if res:
         # Verify that the user deleted
-        getquery = "SELECT * FROM users WHERE `type`='{}' AND `userid`='{}'".format(
+        getquery = "SELECT `userid`, `firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified` FROM users WHERE `type`='{}' AND `userid`='{}'".format(
                     content['type'],
                     content['userid'])
         output = handler.fetch(getquery)
         if len(output) == 0:
-            response = {'message': 'User deleted successfully'}
+            response = output
             rescode = 200
         else:
-            response = {'message': 'Failed to delete user'}
+            response = {'message': 'Mutilple user deleted'}
             rescode = 400
     else:
         response = {'message': 'Failed to delete user'}
@@ -166,13 +169,14 @@ def populate_db():
 
     # Populating users table
     for i in range(20):
+        password = ''.join([random.choice(string.ascii_lowercase) for _ in range(10)])
         fname = ''.join([random.choice(string.ascii_lowercase) for _ in range(10)])
         lname = ''.join([random.choice(string.ascii_lowercase) for _ in range(10)])
         email = ''.join([random.choice(string.ascii_lowercase) for _ in range(5)]) + '@gmail.com'
         mobile = ''.join([random.choice(string.digits) for _ in range(10)])
         typ = 'admin'
 
-        query = "INSERT INTO users (`firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified`) VALUES('{}', '{}', '{}', '{}', '{}', now(), now())".format(fname, lname, email, mobile, typ)
+        query = "INSERT INTO users (`password`, `firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified`) VALUES('{}', '{}', '{}', '{}', '{}', '{}', now(), now())".format(password, fname, lname, email, mobile, typ)
         res = handler.execute(query)
 
     # Populating products table

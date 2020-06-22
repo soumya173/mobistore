@@ -26,6 +26,7 @@ class Dbhandler(object):
     """
     def execute(self, query):
         try:
+            print("Executing query: {}".format(query))
             cursor = self.db.cursor()
             cursor.execute(query)
             self.db.commit()
@@ -46,6 +47,7 @@ class Dbhandler(object):
     """
     def fetch(self, query):
         try:
+            print("Executing query: {}".format(query))
             cursor = self.db.cursor()
             cursor.execute(query)
             cols=[x[0] for x in cursor.description]
