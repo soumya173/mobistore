@@ -1,5 +1,6 @@
 import flask
 from flask import request, jsonify
+from flask_cors import CORS
 import random
 import string
 import time
@@ -7,6 +8,7 @@ import time
 import dbhandler
 
 app = flask.Flask(__name__)
+CORS(app)
 app.config["DEBUG"] = True
 
 """
@@ -26,6 +28,28 @@ def list_all_user():
     query = 'SELECT `userid`, `firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified` FROM users;'
     output = handler.fetch(query)
     return jsonify(output), 200
+
+"""
+    Provides user details for provided userid
+    Params:
+        - userid in URL
+    Returns:
+        - 200 with Obj with all details of user
+        - 404 with empty list if none found
+"""
+@app.route('/user', methods=['GET'])
+def get_user_by_id():
+    if request.method not in ['GET']:
+        return jsonify({"message": "Method not allowed"}), 405
+    userid = request.args.get('userid', type=int)
+    handler = dbhandler.Dbhandler()
+    query = "SELECT `userid`, `firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified` FROM users WHERE `userid`={}".format(userid)
+    output = handler.fetch(query)
+
+    if len(output) == 1:
+        return jsonify(output[0]), 200
+    else:
+        return jsonify([]), 404
 
 """
     Add a new user with all the details provided
@@ -61,7 +85,7 @@ def add_new_user():
                     content['type'])
         output = handler.fetch(getquery)
         if len(output) == 1:
-            response = output
+            response = output[0]
             rescode = 200
         else:
             response = {'message': 'Failed to create user'}
@@ -107,7 +131,7 @@ def modify_user():
                     content['type'])
         output = handler.fetch(getquery)
         if len(output) == 1:
-            response = output
+            response = output[0]
             rescode = 200
         else:
             response = {'message': 'Failed to modify user, multiple rows received'}
@@ -204,6 +228,14 @@ def populate_db():
         query = "INSERT INTO offers (`productid`, `addedby`, `discount`, `description`, `from`, `to`) VALUES('{}', '{}', '{}', '{}', now(), now())".format(productid, addedby, discount, description)
         res = handler.execute(query)
     return jsonify({'message': 'DB populated'}), 200
+
+
+# @app.after_request
+# def after_request(response):
+#   response.headers.add('Access-Control-Allow-Origin', '*')
+#   response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+#   response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+#   return response
 
 # Lets run the app with all the configured URLs
 app.run()
