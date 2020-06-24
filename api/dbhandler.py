@@ -3,12 +3,13 @@ import mysql.connector
 class Dbhandler(object):
     """docstring for Dbhandler"""
     def __init__(self):
-        self.USERNAME = "root"
-        self.PASSWORD = "root"
-        self.DBNAME = "mobistore"
+        self.USERNAME = "soumya173"
+        self.PASSWORD = "mobistore123"
+        self.DBNAME = "soumya173$mobistore"
+        self.HOST = "soumya173.mysql.pythonanywhere-services.com"
 
         self.db = mysql.connector.connect(
-          host = "localhost",
+          host = self.HOST,
           user = self.USERNAME,
           password = self.PASSWORD,
           database = self.DBNAME
