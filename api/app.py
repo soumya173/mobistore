@@ -3,7 +3,6 @@ from flask import request, jsonify
 from flask_cors import CORS
 import random
 import string
-import time
 
 import dbhandler
 
@@ -292,14 +291,15 @@ def modify_product():
     res = handler.execute(query)
     if res:
         # Verify that the product modified
-        getquery = "SELECT * FROM products WHERE `offerid`='{}' AND `name`='{}' AND `type`='{}' AND `price`='{}' AND `description`='{}' AND `instock`='{}' AND `addedby`='{}'".format(
+        getquery = "SELECT * FROM products WHERE `offerid`='{}' AND `name`='{}' AND `type`='{}' AND `price`='{}' AND `description`='{}' AND `instock`='{}' AND `addedby`='{}' AND `productid`={}".format(
                     content['offerid'],
                     content['name'],
                     content['type'],
                     content['price'],
                     content['description'],
                     content['instock'],
-                    content['addedby'])
+                    content['addedby'],
+                    content['productid'])
         output = handler.fetch(getquery)
         if len(output) == 1:
             response = output[0]
@@ -346,6 +346,323 @@ def delete_product():
             rescode = 400
     else:
         response = {'message': 'Failed to delete product'}
+        rescode = 400
+    return jsonify(response), rescode
+
+"""
+    Provides list of all the offers configured in db
+    Params:
+        -
+    Returns:
+        - 200 with List Obj with all details of offers
+        - 200 with empty list if none found
+"""
+@app.route('/offer/list', methods=['GET'])
+def list_all_offer():
+    if request.method not in ['GET']:
+        return jsonify({"message": "Method not allowed"}), 405
+    handler = dbhandler.Dbhandler()
+    # Fetch all users
+    query = 'SELECT * FROM offers;'
+    output = handler.fetch(query)
+    return jsonify(output), 200
+
+"""
+    Provides offer details for provided offerid
+    Params:
+        - offerid in URL
+    Returns:
+        - 200 with Obj with all details of offer
+        - 404 with empty list if none found
+"""
+@app.route('/offer', methods=['GET'])
+def get_offer_by_id():
+    if request.method not in ['GET']:
+        return jsonify({"message": "Method not allowed"}), 405
+    offerid = request.args.get('offerid', type=int)
+    handler = dbhandler.Dbhandler()
+    query = "SELECT * FROM offers WHERE `offerid`={}".format(offerid)
+    output = handler.fetch(query)
+
+    if len(output) == 1:
+        return jsonify(output[0]), 200
+    else:
+        return jsonify([]), 404
+
+"""
+    Add a new offer with all the details provided
+    Params:
+        - JSON obj with all data
+    Returns:
+        - 200 with List Obj with all details the newly created offer
+        - 400 with failure message
+"""
+@app.route('/offer/add', methods=['POST'])
+def add_new_offer():
+    if request.method not in ['POST']:
+        return jsonify({"message": "Method not allowed"}), 405
+    handler = dbhandler.Dbhandler()
+    content = request.json
+    # TODO: Validate duplicate offer before create
+    # Create offer
+    query = "INSERT INTO offers (`productid`, `addedby`, `discount`, `description`, `from`, `to`) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
+                    content['productid'],
+                    content['addedby'],
+                    content['discount'],
+                    content['description'],
+                    content['from'],
+                    content['to'])
+    res = handler.execute(query)
+    if res:
+        # Verify the offer got created
+        getquery = "SELECT * FROM offers WHERE `productid`='{}' AND `addedby`='{}' AND `description`='{}' AND `discount`='{}' AND `from`='{}' AND `to`='{}'".format(
+                    content['productid'],
+                    content['addedby'],
+                    content['description'],
+                    content['discount'],
+                    content['from'],
+                    content['to'])
+        output = handler.fetch(getquery)
+        if len(output) == 1:
+            response = output[0]
+            rescode = 200
+        else:
+            response = {'message': 'Failed to create offer'}
+            rescode = 400
+    else:
+        response = {'message': 'Failed to create offer'}
+        rescode = 400
+    return jsonify(response), rescode
+
+"""
+    Modifies an existing offer
+    Params:
+        - JSON obj with all data
+    Returns:
+        - 200 with List Obj with the details of modified offer
+        - 400 with failure message
+"""
+@app.route('/offer/modify', methods=['PUT'])
+def modify_offer():
+    if request.method not in ['PUT']:
+        return jsonify({"message": "Method not allowed"}), 405
+    handler = dbhandler.Dbhandler()
+    content = request.json
+    # TODO: Validate if offer exists
+    # Modify offer
+    query = "UPDATE offers SET `productid`={}, `addedby`='{}', `discount`='{}', `description`='{}', `from`='{}', `to`='{}' WHERE offerid={}".format(
+                    content['productid'],
+                    content['addedby'],
+                    content['discount'],
+                    content['description'],
+                    content['from'],
+                    content['to'],
+                    content['offerid'])
+    res = handler.execute(query)
+    if res:
+        # Verify that the offer modified
+        getquery = "SELECT * FROM offers WHERE `productid`='{}' AND `addedby`='{}' AND `discount`='{}' AND `description`='{}' AND `from`='{}' AND `to`='{}' AND `offerid`={}".format(
+                    content['productid'],
+                    content['addedby'],
+                    content['discount'],
+                    content['description'],
+                    content['from'],
+                    content['to'],
+                    content['offerid'])
+        output = handler.fetch(getquery)
+        if len(output) == 1:
+            response = output[0]
+            rescode = 200
+        else:
+            response = {'message': 'Failed to modify offer, multiple rows received'}
+            rescode = 400
+    else:
+        response = {'message': 'Failed to modify offer'}
+        rescode = 400
+    return jsonify(response), rescode
+
+"""
+    Deletes an existing offer
+    Params:
+        - JSON obj with offerid and type
+    Returns:
+        - 200 with success message
+        - 400 with failure message
+"""
+@app.route('/offer/delete', methods=['DELETE'])
+def delete_offer():
+    if request.method not in ['DELETE']:
+        return jsonify({"message": "Method not allowed"}), 405
+    handler = dbhandler.Dbhandler()
+    content = request.json
+    # Validate if offer exists
+    # Delete offer
+    query = "DELETE FROM offers WHERE `offerid`='{}'".format(
+                    content['offerid'])
+    res = handler.execute(query)
+    if res:
+        # Verify that the offer deleted
+        getquery = "SELECT * FROM offers WHERE `offerid`='{}'".format(
+                    content['offerid'])
+        output = handler.fetch(getquery)
+        if len(output) == 0:
+            response = output
+            rescode = 200
+        else:
+            response = {'message': 'Mutilple offer deleted'}
+            rescode = 400
+    else:
+        response = {'message': 'Failed to delete offer'}
+        rescode = 400
+    return jsonify(response), rescode
+
+"""
+    Provides list of all the images configured in db
+    Params:
+        -
+    Returns:
+        - 200 with List Obj with all details of images
+        - 200 with empty list if none found
+"""
+@app.route('/image/list', methods=['GET'])
+def list_all_image():
+    if request.method not in ['GET']:
+        return jsonify({"message": "Method not allowed"}), 405
+    handler = dbhandler.Dbhandler()
+    # Fetch all users
+    query = 'SELECT * FROM images;'
+    output = handler.fetch(query)
+    return jsonify(output), 200
+
+"""
+    Provides image details for provided imageid
+    Params:
+        - imageid in URL
+    Returns:
+        - 200 with Obj with all details of image
+        - 404 with empty list if none found
+"""
+@app.route('/image', methods=['GET'])
+def get_image_by_id():
+    if request.method not in ['GET']:
+        return jsonify({"message": "Method not allowed"}), 405
+    imageid = request.args.get('imageid', type=int)
+    handler = dbhandler.Dbhandler()
+    query = "SELECT * FROM images WHERE `imageid`={}".format(imageid)
+    output = handler.fetch(query)
+
+    if len(output) == 1:
+        return jsonify(output[0]), 200
+    else:
+        return jsonify([]), 404
+
+"""
+    Add a new image with all the details provided
+    Params:
+        - JSON obj with all data
+    Returns:
+        - 200 with List Obj with all details the newly created image
+        - 400 with failure message
+"""
+@app.route('/image/add', methods=['POST'])
+def add_new_image():
+    if request.method not in ['POST']:
+        return jsonify({"message": "Method not allowed"}), 405
+    handler = dbhandler.Dbhandler()
+    content = request.json
+    # TODO: Validate duplicate image before create
+    # Create image
+    query = "INSERT INTO images (`productid`, `url`) VALUES('{}', '{}')".format(
+                    content['productid'],
+                    content['url'])
+    res = handler.execute(query)
+    if res:
+        # Verify the image got created
+        getquery = "SELECT * FROM images WHERE `productid`='{}' AND `url`='{}'".format(
+                    content['productid'],
+                    content['url'])
+        output = handler.fetch(getquery)
+        if len(output) == 1:
+            response = output[0]
+            rescode = 200
+        else:
+            response = {'message': 'Failed to create image'}
+            rescode = 400
+    else:
+        response = {'message': 'Failed to create image'}
+        rescode = 400
+    return jsonify(response), rescode
+
+"""
+    Modifies an existing image
+    Params:
+        - JSON obj with all data
+    Returns:
+        - 200 with List Obj with the details of modified image
+        - 400 with failure message
+"""
+@app.route('/image/modify', methods=['PUT'])
+def modify_image():
+    if request.method not in ['PUT']:
+        return jsonify({"message": "Method not allowed"}), 405
+    handler = dbhandler.Dbhandler()
+    content = request.json
+    # TODO: Validate if image exists
+    # Modify image
+    query = "UPDATE images SET `productid`={}, `url`='{}' WHERE imageid={}".format(
+                    content['productid'],
+                    content['url'],
+                    content['imageid'])
+    res = handler.execute(query)
+    if res:
+        # Verify that the image modified
+        getquery = "SELECT * FROM images WHERE `productid`='{}' AND `url`='{}'".format(
+                    content['productid'],
+                    content['url'])
+        output = handler.fetch(getquery)
+        if len(output) == 1:
+            response = output[0]
+            rescode = 200
+        else:
+            response = {'message': 'Failed to modify image, multiple rows received'}
+            rescode = 400
+    else:
+        response = {'message': 'Failed to modify image'}
+        rescode = 400
+    return jsonify(response), rescode
+
+"""
+    Deletes an existing image
+    Params:
+        - JSON obj with imageid and type
+    Returns:
+        - 200 with success message
+        - 400 with failure message
+"""
+@app.route('/image/delete', methods=['DELETE'])
+def delete_image():
+    if request.method not in ['DELETE']:
+        return jsonify({"message": "Method not allowed"}), 405
+    handler = dbhandler.Dbhandler()
+    content = request.json
+    # Validate if image exists
+    # Delete image
+    query = "DELETE FROM images WHERE `imageid`='{}'".format(
+                    content['imageid'])
+    res = handler.execute(query)
+    if res:
+        # Verify that the image deleted
+        getquery = "SELECT * FROM images WHERE `imageid`='{}'".format(
+                    content['imageid'])
+        output = handler.fetch(getquery)
+        if len(output) == 0:
+            response = output
+            rescode = 200
+        else:
+            response = {'message': 'Mutilple image deleted'}
+            rescode = 400
+    else:
+        response = {'message': 'Failed to delete image'}
         rescode = 400
     return jsonify(response), rescode
 

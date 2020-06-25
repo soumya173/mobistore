@@ -66,4 +66,5 @@ class Dbhandler(object):
             print(e)
             results = []
 
+        print("Output: {}".format(results))
         return results
