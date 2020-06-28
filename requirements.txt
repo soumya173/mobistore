@@ -1,0 +1,5 @@
+Fabric
+Flask-WTF
+WTForms
+coverage
+flask-login

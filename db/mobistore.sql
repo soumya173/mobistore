@@ -48,3 +48,5 @@ ALTER TABLE `images` ADD FOREIGN KEY (`productid`) REFERENCES `products` (`produ
 ALTER TABLE `offers` ADD FOREIGN KEY (`productid`) REFERENCES `products` (`productid`);
 
 ALTER TABLE `offers` ADD FOREIGN KEY (`addedby`) REFERENCES `users` (`userid`);
+
+INSERT INTO `users` (`password`, `firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified`) VALUES('admin', 'Soumyajit', 'Gorai', 'sgorai@gmail.com', '9635031710', 'admin', now(), now());
