@@ -33,9 +33,6 @@
   <link rel="shortcut icon" href="/static/ico/favicon.png">
   <!-- /favicons -->
 
-  <!-- scripts -->
-  <script src="/static/js/libs/modernizr-2.8.2.min.js"></script>
-
 </head>
 
 <body>
@@ -44,25 +41,25 @@
 
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading">Start Bootstrap </div>
+      <div class="sidebar-heading">Admin Dashboard</div>
       <div class="list-group list-group-flush">
-        <a href="#" class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'profile' }}"><i class="fa fa-user-circle-o" aria-hidden="true"></i>  Profile</a>
-        <a href="#" class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'products' }}"><i class="fa fa-desktop" aria-hidden="true"></i>  Products</a>
-        <a href="#" class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'offers' }}"><i class="fa fa-star" aria-hidden="true"></i>  Offers</a>
-        <a href="#" class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'users' }}"><i class="fa fa-group" aria-hidden="true"></i>  Users</a>
-        <a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action"><i class="fa fa-power-off" aria-hidden="true"></i>  Log Out</a>
+        <a href="{{ url_for('profile') }}" class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'profile' }}"><i class="fa fa-user-circle-o" aria-hidden="true"></i>  Profile</a>
+        <a href="#products" class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'all_products' or request.endpoint == 'add_product' }}" data-toggle="collapse" data-parent="#sidebar-wrapper"><i class="fa fa-desktop" aria-hidden="true"></i>Products</a>
+        <div class="collapse" id="products">
+          <a href="{{ url_for('all_products') }}" class="list-group-item list-group-item-action list-group-item-secondary {{ 'active' if request.endpoint == 'all_products' }}"><i class="fa fa-list-ul" aria-hidden="true"></i>All Products</a>
+          <a href="{{ url_for('add_product') }}" class="list-group-item list-group-item-action list-group-item-secondary {{ 'active' if request.endpoint == 'add_product' }}"><i class="fa fa-plus" aria-hidden="true"></i>Add Product</a>
+        </div>
+        <a href="#" class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'offers' }}"><i class="fa fa-star" aria-hidden="true"></i>Offers</a>
+        <a href="#" class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'users' }}"><i class="fa fa-group" aria-hidden="true"></i>Users</a>
+        <a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action"><i class="fa fa-power-off" aria-hidden="true"></i>Log Out</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
 
     <!-- Page Content -->
     <div id="page-content-wrapper">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-sm-12">
-            {% block content %}{% endblock %}
-          </div>
-        </div>
+      <div class="container-fluid h-100">
+        {% block content %}{% endblock %}
       </div>
     </div>
     <!-- /#page-content-wrapper -->

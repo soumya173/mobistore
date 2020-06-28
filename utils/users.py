@@ -1,4 +1,3 @@
-# from flask import jsonify
 from utils import dbhandler
 
 class Users():
@@ -54,7 +53,7 @@ class Users():
         return False
 
     """
-        Provides user details for provided userid
+        Provides user details for provided email
         Params:
             - email
         Returns:
@@ -123,7 +122,7 @@ class Users():
     def modify_user(self, password, firstname, lastname, email, mobile, type, userid):
         # TODO: Validate if user exists
         # Modify user
-        query = "UPDATE users SET `password`, `firstname`='{}', `lastname`='{}', `email`='{}', `mobile`='{}', `type`='{}', `modified`=now() WHERE userid={}".format(
+        query = "UPDATE users SET `password`='{}', `firstname`='{}', `lastname`='{}', `email`='{}', `mobile`='{}', `type`='{}', `modified`=now() WHERE userid={}".format(
                         password,
                         firstname,
                         lastname,
