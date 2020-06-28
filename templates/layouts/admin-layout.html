@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>{% block title %}{% endblock %}</title>
+
+  <!-- meta -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <!-- /meta -->
+
+  <!-- styles -->
+  <!-- <link type="text/css" rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <link type="text/css" rel="stylesheet" href="/static/css/bootstrap-theme.min.css" /> -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link type="text/css" rel="stylesheet" href="/static/css/style.css" />
+  <!-- /styles -->
+
+  <!-- favicons -->
+  <link rel="shortcut icon" href="/static/ico/favicon.png">
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/static/ico/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/ico/apple-touch-icon-114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/ico/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="/static/ico/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="/static/ico/favicon.png">
+  <!-- /favicons -->
+
+</head>
+
+<body>
+
+  <div class="d-flex" id="wrapper">
+
+    <!-- Sidebar -->
+    <div class="bg-light border-right" id="sidebar-wrapper">
+      <div class="sidebar-heading">Admin Dashboard</div>
+      <div class="list-group list-group-flush">
+        <a href="{{ url_for('profile') }}" class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'profile' }}"><i class="fa fa-user-circle-o" aria-hidden="true"></i>  Profile</a>
+        <a href="#products" class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'all_products' or request.endpoint == 'add_product' }}" data-toggle="collapse" data-parent="#sidebar-wrapper"><i class="fa fa-desktop" aria-hidden="true"></i>Products</a>
+        <div class="collapse" id="products">
+          <a href="{{ url_for('all_products') }}" class="list-group-item list-group-item-action list-group-item-secondary {{ 'active' if request.endpoint == 'all_products' }}"><i class="fa fa-list-ul" aria-hidden="true"></i>All Products</a>
+          <a href="{{ url_for('add_product') }}" class="list-group-item list-group-item-action list-group-item-secondary {{ 'active' if request.endpoint == 'add_product' }}"><i class="fa fa-plus" aria-hidden="true"></i>Add Product</a>
+        </div>
+        <a href="#" class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'offers' }}"><i class="fa fa-star" aria-hidden="true"></i>Offers</a>
+        <a href="#" class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'users' }}"><i class="fa fa-group" aria-hidden="true"></i>Users</a>
+        <a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action"><i class="fa fa-power-off" aria-hidden="true"></i>Log Out</a>
+      </div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+      <div class="container-fluid h-100">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+  </div>
+  <!-- /#wrapper -->
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="/static/js/script.js" defer></script>
+
+  <!-- Menu Toggle Script -->
+  <script>
+    $("#menu-toggle").click(function(e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+    });
+  </script>
+
+</body>
+
+</html>

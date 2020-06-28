@@ -6,9 +6,15 @@ class Dbhandler(object):
         self.USERNAME = "root"
         self.PASSWORD = "root"
         self.DBNAME = "mobistore"
+        self.HOST = "localhost"
+
+        # self.USERNAME = "soumya173"
+        # self.PASSWORD = "mobistore123"
+        # self.DBNAME = "soumya173$mobistore"
+        # self.HOST = "soumya173.mysql.pythonanywhere-services.com"
 
         self.db = mysql.connector.connect(
-          host = "localhost",
+          host = self.HOST,
           user = self.USERNAME,
           password = self.PASSWORD,
           database = self.DBNAME
@@ -26,12 +32,15 @@ class Dbhandler(object):
     """
     def execute(self, query):
         try:
+            print("Executing query: {}".format(query))
             cursor = self.db.cursor()
             cursor.execute(query)
             self.db.commit()
 
             cursor.close()
         except Exception as e:
+            print("Exception in execute")
+            print(e)
             return False
         return True
 
@@ -44,6 +53,7 @@ class Dbhandler(object):
     """
     def fetch(self, query):
         try:
+            print("Executing query: {}".format(query))
             cursor = self.db.cursor()
             cursor.execute(query)
             cols=[x[0] for x in cursor.description]
@@ -57,6 +67,9 @@ class Dbhandler(object):
                     result[col] = val
                 results.append(result)
         except Exception as e:
+            print("Exception in fetch")
+            print(e)
             results = []
 
+        print("Output: {}".format(results))
         return results

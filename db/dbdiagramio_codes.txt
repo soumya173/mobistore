@@ -1,0 +1,41 @@
+
+Table users {
+  userid int [pk, increment]
+  password varchar [not null]
+  firstname varchar [not null]
+  lastname varchar [not null]
+  email varchar [not null]
+  mobile bigint [default: null]
+  type varchar [not null]
+  created timestamp [not null]
+  modified timestamp [default: `now()`]
+}
+
+Table products {
+  productid int [pk, increment]
+  offerid int [default: null]
+  name varchar [not null]
+  type varchar [not null]
+  price int [not null]
+  description text [default: null]
+  instock boolean [not null]
+  created timestamp
+  modified timestamp [default: `now()`]
+  addedby int [ref: > users.userid]
+}
+
+Table images {
+  imageid int [pk, increment]
+  productid int [ref: > products.productid]
+  url varchar [not null]
+}
+
+Table offers {
+  offerid int [pk, increment]
+  productid int [ref: > products.productid]
+  addedby int [ref: > users.userid]
+  discount int [default: 0]
+  description text [default: null]
+  from timestamp [not null]
+  to timestamp [not null]
+}

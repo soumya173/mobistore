@@ -1,0 +1,54 @@
+{% extends 'layouts/admin-layout.html' %}
+{% block title %}Profile | Admin{% endblock %}
+{% block content %}
+  <div class="row h-100 align-items-center">
+    <div class="col-sm-12">
+      <div class="form-container">
+        <div class="error-notification">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                  <div class="alert alert-{{ category }} fade show">
+                    <a class="close" data-dismiss="alert">&times;</a>
+                    {{ message }}
+                  </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+        </div>
+        <div class="alert alert-info fade show">
+          <a class="close" data-dismiss="alert">&times;</a>
+          Last modified at: {{user.modified}}
+        </div>
+        <form method="post">
+          <div class="form-label-group">
+            {{ form.firstname(class_ = 'form-control', id='firstName', placeholder = form.firstname.label.text, required = true, value = user.firstname) }}
+            <label for="firstName">First Name</label>
+          </div>
+          <div class="form-label-group">
+            {{ form.lastname(class_ = 'form-control', id='lastName', placeholder = form.lastname.label.text, required = true, value = user.lastname) }}
+            <label for="lastName">Last Name</label>
+          </div>
+          <div class="form-label-group">
+            {{ form.email(class_ = 'form-control', id='email', placeholder = form.email.label.text, required = true, value = user.email, readonly = True) }}
+            <label for="email">Email</label>
+          </div>
+          <div class="form-label-group">
+            {{ form.mobile(class_ = 'form-control', id='mobile', placeholder = form.mobile.label.text, required = true, value = user.mobile) }}
+            <label for="mobile">Mobile</label>
+          </div>
+
+          <div class="form-label-group">
+            {{ form.password(class_ = 'form-control', id='inputPassword', placeholder = form.password.label.text, required = true) }}
+            <label for="inputPassword">Password</label>
+          </div>
+          <div class="form-label-group">
+            {{ form.confirm(class_ = 'form-control', id='confirmPassword', placeholder = form.confirm.label.text, required = true) }}
+            <label for="confirmPassword">Confirm Password</label>
+          </div>
+          <button class="btn btn-primary btn-block btn-login" type="submit">Modify Details</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

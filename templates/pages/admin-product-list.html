@@ -1,0 +1,36 @@
+{% extends 'layouts/admin-layout.html' %}
+{% block title %}Product List | Admin{% endblock %}
+{% block content %}
+	<div class="row row-search">
+        <div class="col-md-12">
+            <div class="input-group">
+                <span class="input-group-prepend">
+                    <div class="input-group-text bg-transparent border-right-0"><i class="fa fa-search"></i></div>
+                </span>
+                <input class="form-control py-2 border-left-0 border" type="search" placeholder="Search is not yet implemented" id="example-search-input" disabled="true">
+                <span class="input-group-append">
+                <button class="btn btn-outline-secondary border-left-0 border disabled" type="submit">Search</button>
+              </span>
+            </div>
+        </div>
+    </div>
+  <div class="row">
+	{% for product in products %}
+	    <div class="col-lg-4 col-md-6 mb-4">
+			<div class="card h-100">
+			  <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+			  <div class="card-body">
+			    <h4 class="card-title">
+			      <a href="#">{{ product.name }}</a>
+			    </h4>
+			    <h5><i class="fa fa-inr" aria-hidden="true"></i> {{ product.price }}</h5>
+			    <p class="card-text">{{ product.description }}</p>
+			  </div>
+			  <div class="card-footer">
+			    <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+			  </div>
+			</div>
+		</div>
+	{% endfor %}
+  </div>
+{% endblock %}
