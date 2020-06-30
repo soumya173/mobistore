@@ -1,0 +1,62 @@
+{% extends 'layouts/admin-layout.html' %}
+{% block title %}Add Product | Admin{% endblock %}
+{% block content %}
+  <div class="row h-100 align-items-center">
+    <div class="col-sm-12">
+      <div class="form-container">
+        <div class="row">
+          <div class="col-sm-12">
+            <h3 class="text-center">Add New Offer</h3>
+            <hr class="m-0" />
+          </div>
+        </div>
+        <div class="error-notification">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            	{% for category, message in messages %}
+                <div class="alert alert-{{ category }} fade show">
+                  <a class="close" data-dismiss="alert">&times;</a>
+                  {{ message }}
+                </div>
+	            {% endfor %}
+            {% endif %}
+          {% endwith %}
+        </div>
+        <form method="post">
+          <div class="form-label-group">
+            {{ form.productid(class_ = 'form-control', id='productid', placeholder = form.productid.label.text, required = true) }}
+            <label for="productid">Product ID</label>
+          </div>
+          <div class="form-label-group">
+            {{ form.discount(class_ = 'form-control', id='discount', placeholder = form.discount.label.text, required = true) }}
+            <label for="discount">Discount</label>
+          </div>
+          <div class="form-label-group">
+            {{ form.description(class_ = 'form-control', id='description', placeholder = form.description.label.text, required = true) }}
+            <label for="description">Description</label>
+          </div>
+          <div class="form-label-group">
+            <div class='input-group date' id='datetimepickerfrom'>
+                <input type='text' class="form-control" />
+                <span class="input-group-addon">
+                    <span class="fa fa-calendar"></span>
+                </span>
+            </div>
+            <label for="fromd">From</label>
+          </div>
+          <div class="form-label-group">
+            <div class='input-group date' id='datetimepickerto'>
+                <input type='text' class="form-control" />
+                <span class="input-group-addon">
+                    <span class="fa fa-calendar"></span>
+                </span>
+            </div>
+            <label for="to">To</label>
+          </div>
+          <!-- Material switch -->
+          <button class="btn btn-primary btn-block btn-login" type="submit">Add Offer</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

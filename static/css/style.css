@@ -143,6 +143,10 @@
   margin: auto;
 }
 
+.error-notification, #sidebarCollapse {
+  margin-bottom: 10px;
+}
+
 /* Fallback for Edge
 -------------------------------------------------- */
 

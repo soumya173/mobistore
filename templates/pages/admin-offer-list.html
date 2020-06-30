@@ -1,0 +1,68 @@
+{% extends 'layouts/admin-layout.html' %}
+{% block title %}Offer List | Admin{% endblock %}
+{% block content %}
+  <div class="row row-search">
+      <div class="col-md-12">
+          <div class="input-group">
+              <span class="input-group-prepend">
+                  <div class="input-group-text bg-transparent border-right-0"><i class="fa fa-search"></i></div>
+              </span>
+              <input class="form-control py-2 border-left-0 border" type="search" placeholder="Search is not yet implemented" id="example-search-input" disabled="true">
+              <span class="input-group-append">
+              <button class="btn btn-outline-secondary border-left-0 border disabled" type="submit">Search</button>
+            </span>
+          </div>
+      </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} fade show">
+              <a class="close" data-dismiss="alert">&times;</a>
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+  </div>
+  <div class="row">
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Offer ID</th>
+          <th scope="col">Product ID</th>
+          <th scope="col">From</th>
+          <th scope="col">To</th>
+          <th scope="col">Discount</th>
+          <th scope="col">Added By</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for offer in offers %}
+          <tr>
+            <th scope="row">{{ offer.offerid }}</th>
+            <td>{{ offer.productid }}</td>
+            <td>{{ offer.from }}</td>
+            <td>{{ offer.to }}</td>
+            <td>{{ offer.discount }}</td>
+            <td>{{ offer.addedby }}</td>
+            <td>
+              <div class="btn-group mr-2" role="group" aria-label="First group">
+                <button type="button" class="btn btn-info"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                <button type="button" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></button>
+              </div>
+            </td>
+            <!-- <td><button class="btn btn-link"><i class="fa fa-pencil" aria-hidden="true"></i></button></td> -->
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% for offer in offers %}
+
+  {% endfor %}
+  </div>
+{% endblock %}

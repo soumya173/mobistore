@@ -119,14 +119,13 @@ class Users():
             - List Obj with the details of modified user
             - False
     """
-    def modify_user(self, password, firstname, lastname, email, mobile, type, userid):
+    def modify_user(self, password, firstname, lastname, mobile, type, userid):
         # TODO: Validate if user exists
         # Modify user
-        query = "UPDATE users SET `password`='{}', `firstname`='{}', `lastname`='{}', `email`='{}', `mobile`='{}', `type`='{}', `modified`=now() WHERE userid={}".format(
+        query = "UPDATE users SET `password`='{}', `firstname`='{}', `lastname`='{}', `mobile`='{}', `type`='{}', `modified`=now() WHERE userid={}".format(
                         password,
                         firstname,
                         lastname,
-                        email,
                         mobile,
                         type,
                         userid)
