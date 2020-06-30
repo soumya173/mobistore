@@ -25,9 +25,9 @@ app.config.from_object('config')
 #----------------------------------------------------------------------------#
 
 
-# @app.route('/')
-# def home():
-#     return render_template('pages/placeholder.home.html')
+@app.route('/')
+def home():
+    return render_template('pages/placeholder.home.html')
 
 @app.route('/about')
 def about():
@@ -100,9 +100,7 @@ def all_users():
 def add_user():
     if 'loggedin' not in session or session['loggedin'] != True:
         return redirect(url_for('login'))
-    if request.method == 'GET':
-        return render_template('forms/admin-user-add.html', form=AdminUserAdd(request.form))
-    elif request.method == 'POST':
+    if request.method == 'POST':
         firstname = request.form.get('firstname')
         lastname = request.form.get('lastname')
         mobile = request.form.get('mobile')
@@ -116,7 +114,7 @@ def add_user():
             flash("Failed to add new User.", "danger")
         else:
             flash("User added", "success")
-        return render_template('forms/admin-user-add.html', form=AdminUserAdd(request.form))
+    return render_template('forms/admin-user-add.html', form=AdminUserAdd(request.form))
 
 @app.route('/admin/products', methods=['GET'])
 def all_products():
@@ -138,16 +136,47 @@ def add_product():
         price = request.form.get('price')
         description = request.form.get('description')
         instock = 1 if request.form.get('instock') == 'on' else 0
-        addedby = request.form.get('addedby')
+        addedby = session['userid']
 
         product = products.Products()
         all_products = product.add_new_product(offerid=offerid, name=name, type=type, price=price, description=description, instock=instock, addedby=addedby)
         if all_products == False:
-            flash("Failed to add new product. Please Try Again.", "danger")
-            # return render_template('forms/admin-product-add.html', form=AdminProductAdd(request.form))
+            flash("Failed to add new product", "danger")
         else:
             flash("Product added", "success")
     return render_template('forms/admin-product-add.html', form=AdminProductAdd(request.form))
+
+@app.route('/admin/products/modify', methods=['GET', 'POST'])
+def modify_product():
+    if 'loggedin' not in session or session['loggedin'] != True:
+        return redirect(url_for('login'))
+
+    productid = request.args.get('id')
+    product = products.Products()
+    product_details = product.get_product_by_id(productid=productid)
+    if request.method == 'GET':
+        if product_details == False:
+            flash("Product Not Found")
+            redirect(url_for('all_products'))
+        return render_template('forms/admin-product-modify.html', products=product_details, form=AdminProductAdd(request.form))
+    if request.method == 'POST':
+        offerid = 0 if request.form.get('offerid') == 'None' else request.form.get('offerid')
+        name = request.form.get('name')
+        type = request.form.get('type')
+        price = request.form.get('price')
+        description = request.form.get('description')
+        instock = 1 if request.form.get('instock') == 'on' else 0
+        addedby = session['userid']
+        productid = request.args.get('id')
+
+        product = products.Products()
+        modified_product = product.modify_product(offerid=offerid, name=name, type=type, price=price, description=description, instock=instock, addedby=addedby, productid=productid)
+        if modified_product == False:
+            flash("Failed to modify product", "danger")
+            return render_template('forms/admin-product-modify.html', products=product_details, form=AdminProductAdd(request.form))
+        else:
+            flash("Product modified", "success")
+            return render_template('forms/admin-product-modify.html', products=modified_product, form=AdminProductAdd(request.form))
 
 @app.route('/admin/offers', methods=['GET'])
 def all_offers():

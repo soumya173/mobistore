@@ -26,7 +26,7 @@ class AdminProductAdd(FlaskForm):
     description = TextField('Description', validators=[DataRequired(), Length(min=6, max=40)])
     price = IntegerField('Price', validators=[DataRequired(), NumberRange(min=8, max=10)])
     offerid = IntegerField('Offer Id', validators=[DataRequired(), NumberRange(min=8, max=10)])
-    addedby = IntegerField('Added By', validators=[DataRequired(), NumberRange(min=8, max=10)])
+    # addedby = IntegerField('Added By', validators=[DataRequired(), NumberRange(min=8, max=10)])
 
 class AdminOfferAdd(FlaskForm):
     productid = IntegerField('productid', validators=[DataRequired(), Length(min=1)])
