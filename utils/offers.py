@@ -38,7 +38,12 @@ class Offers():
     """
         Add a new offer with all the details provided
         Params:
-            -
+            - productid
+            - addedby
+            - discount
+            - description
+            - fromd
+            - tod
         Returns:
             - List Obj with all details the newly created offer
             - False
@@ -71,7 +76,13 @@ class Offers():
     """
         Modifies an existing offer
         Params:
-            -
+            - productid
+            - addedby
+            - discount
+            - description
+            - fromd
+            - tod
+            - offerid
         Returns:
             - List Obj with the details of modified offer
             - False

@@ -38,7 +38,13 @@ class Products():
     """
         Add a new product with all the details provided
         Params:
-            -
+            - offerid
+            - name
+            - type
+            - price
+            - description
+            - instock
+            - addedby
         Returns:
             - List Obj with all details the newly created product
             - False
@@ -72,7 +78,14 @@ class Products():
     """
         Modifies an existing product
         Params:
-            -
+            - offerid
+            - name
+            - type
+            - price
+            - description
+            - instock
+            - addedby
+            - productid
         Returns:
             - List Obj with the details of modified product
             - False

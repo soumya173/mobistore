@@ -27,6 +27,7 @@
           Last modified at: {{user.modified}}
         </div>
         <form method="post">
+          {{ form.hidden_tag() }}
           <div class="form-label-group">
             {{ form.firstname(class_ = 'form-control', id='firstName', placeholder = form.firstname.label.text, required = true, value = user.firstname) }}
             <label for="firstName">First Name</label>

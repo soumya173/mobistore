@@ -23,8 +23,6 @@ app.config.from_object('config')
 #----------------------------------------------------------------------------#
 # Controllers.
 #----------------------------------------------------------------------------#
-
-
 @app.route('/')
 def home():
     return render_template('pages/placeholder.home.html')
@@ -41,18 +39,23 @@ def login():
         form = LoginForm(request.form)
         return render_template('forms/login-form.html', form=form)
     elif request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-        user = users.Users()
-        user_details = user.authenticate_user(email, password)
-        if user_details != False:
-            session['loggedin'] = True
-            session['userid'] = user_details['userid']
-            session['email'] = user_details['email']
-            return redirect(url_for('profile'))
+        form = LoginForm(request.form)
+        if form.validate():
+            email = request.form.get('email')
+            password = request.form.get('password')
+            user = users.Users()
+            user_details = user.authenticate_user(email, password)
+            if user_details != False:
+                session['loggedin'] = True
+                session['userid'] = user_details['userid']
+                session['email'] = user_details['email']
+                return redirect(url_for('profile'))
+            else:
+                flash("Invalid Credentials", "danger")
+                return render_template('forms/login-form.html', form=form)
         else:
-            flash("Invalid Credentials")
-            return render_template('forms/login-form.html', form=LoginForm(request.form))
+            flash("Invalid inputs provided", "danger")
+            return render_template('forms/login-form.html', form=form)
 
 @app.route('/admin/logout', methods=['GET'])
 def logout():
@@ -73,20 +76,25 @@ def profile():
     if request.method == 'GET':
         return render_template('forms/admin-profile-form.html', user=orig_user_details, form=AdminProfileForm(request.form))
     elif request.method == 'POST':
-        firstname = request.form.get('firstname')
-        lastname = request.form.get('lastname')
-        mobile = request.form.get('mobile')
-        password = request.form.get('password')
-        confirm = request.form.get('confirm')
+        form = AdminProfileForm(request.form)
+        if form.validate():
+            firstname = request.form.get('firstname')
+            lastname = request.form.get('lastname')
+            mobile = request.form.get('mobile')
+            password = request.form.get('password')
+            confirm = request.form.get('confirm')
 
-        user = users.Users()
-        new_user_details = user.modify_user(password=password, firstname=firstname, lastname=lastname, mobile=mobile, type="admin", userid=userid)
-        if new_user_details == False:
-            flash("Failed to modify user details", "danger")
-            return render_template('forms/admin-profile-form.html', user=orig_user_details, form=AdminProfileForm(request.form))
+            user = users.Users()
+            new_user_details = user.modify_user(password=password, firstname=firstname, lastname=lastname, mobile=mobile, type="admin", userid=userid)
+            if new_user_details == False:
+                flash("Failed to modify user details", "danger")
+                return render_template('forms/admin-profile-form.html', user=orig_user_details, form=form)
+            else:
+                flash("Profile modified", "success")
+                return render_template('forms/admin-profile-form.html', user=new_user_details, form=form)
         else:
-            flash("Profile modified", "success")
-            return render_template('forms/admin-profile-form.html', user=new_user_details, form=AdminProfileForm(request.form))
+            flash("Invalid inputs provided", "danger")
+            return render_template('forms/admin-profile-form.html', user=orig_user_details, form=form)
 
 @app.route('/admin/users', methods=['GET'])
 def all_users():
@@ -100,21 +108,29 @@ def all_users():
 def add_user():
     if 'loggedin' not in session or session['loggedin'] != True:
         return redirect(url_for('login'))
+    if request.method == 'GET':
+        return render_template('forms/admin-user-add.html', form=AdminUserAdd(request.form))
     if request.method == 'POST':
-        firstname = request.form.get('firstname')
-        lastname = request.form.get('lastname')
-        mobile = request.form.get('mobile')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        type = "admin"
+        form = AdminUserAdd(request.form)
+        if form.validate():
+            firstname = request.form.get('firstname')
+            lastname = request.form.get('lastname')
+            mobile = request.form.get('mobile')
+            email = request.form.get('email')
+            password = request.form.get('password')
+            type = "admin"
 
-        user = users.Users()
-        new_user = user.add_new_user(password=password, firstname=firstname, lastname=lastname, email=email, mobile=mobile, type=type)
-        if new_user == False:
-            flash("Failed to add new User.", "danger")
+            user = users.Users()
+            new_user = user.add_new_user(password=password, firstname=firstname, lastname=lastname, email=email, mobile=mobile, type=type)
+            if new_user == False:
+                flash("Failed to add new User.", "danger")
+                return render_template('forms/admin-user-add.html', form=form)
+            else:
+                flash("User added", "success")
+                return render_template('forms/admin-user-add.html', form=form)
         else:
-            flash("User added", "success")
-    return render_template('forms/admin-user-add.html', form=AdminUserAdd(request.form))
+            flash("Invalid inputs provided", "danger")
+            return render_template('forms/admin-user-add.html', form=form)
 
 @app.route('/admin/products', methods=['GET'])
 def all_products():
@@ -128,23 +144,30 @@ def all_products():
 def add_product():
     if 'loggedin' not in session or session['loggedin'] != True:
         return redirect(url_for('login'))
-
+    if request.method == 'GET':
+        return render_template('forms/admin-product-add.html', form=AdminProductAdd(request.form))
     if request.method == 'POST':
-        offerid = request.form.get('offerid')
-        name = request.form.get('name')
-        type = request.form.get('type')
-        price = request.form.get('price')
-        description = request.form.get('description')
-        instock = 1 if request.form.get('instock') == 'on' else 0
-        addedby = session['userid']
+        form = AdminProductAdd(request.form)
+        if form.validate():
+            offerid = request.form.get('offerid')
+            name = request.form.get('name')
+            type = request.form.get('type')
+            price = request.form.get('price')
+            description = request.form.get('description')
+            instock = 1 if request.form.get('instock') == 'on' else 0
+            addedby = session['userid']
 
-        product = products.Products()
-        all_products = product.add_new_product(offerid=offerid, name=name, type=type, price=price, description=description, instock=instock, addedby=addedby)
-        if all_products == False:
-            flash("Failed to add new product", "danger")
+            product = products.Products()
+            all_products = product.add_new_product(offerid=offerid, name=name, type=type, price=price, description=description, instock=instock, addedby=addedby)
+            if all_products == False:
+                flash("Failed to add new product", "danger")
+                return render_template('forms/admin-product-add.html', form=form)
+            else:
+                flash("Product added", "success")
+                return render_template('forms/admin-product-add.html', form=form)
         else:
-            flash("Product added", "success")
-    return render_template('forms/admin-product-add.html', form=AdminProductAdd(request.form))
+            flash("Invalid inputs provided", "danger")
+            return render_template('forms/admin-product-add.html', form=form)
 
 @app.route('/admin/products/modify', methods=['GET', 'POST'])
 def modify_product():
@@ -160,23 +183,28 @@ def modify_product():
             redirect(url_for('all_products'))
         return render_template('forms/admin-product-modify.html', products=product_details, form=AdminProductAdd(request.form))
     if request.method == 'POST':
-        offerid = 0 if request.form.get('offerid') == 'None' else request.form.get('offerid')
-        name = request.form.get('name')
-        type = request.form.get('type')
-        price = request.form.get('price')
-        description = request.form.get('description')
-        instock = 1 if request.form.get('instock') == 'on' else 0
-        addedby = session['userid']
-        productid = request.args.get('id')
+        form = AdminProductAdd(request.form)
+        if form.validate():
+            offerid = 0 if request.form.get('offerid') == 'None' else request.form.get('offerid')
+            name = request.form.get('name')
+            type = request.form.get('type')
+            price = request.form.get('price')
+            description = request.form.get('description')
+            instock = 1 if request.form.get('instock') == 'on' else 0
+            addedby = session['userid']
+            productid = request.args.get('id')
 
-        product = products.Products()
-        modified_product = product.modify_product(offerid=offerid, name=name, type=type, price=price, description=description, instock=instock, addedby=addedby, productid=productid)
-        if modified_product == False:
-            flash("Failed to modify product", "danger")
-            return render_template('forms/admin-product-modify.html', products=product_details, form=AdminProductAdd(request.form))
+            product = products.Products()
+            modified_product = product.modify_product(offerid=offerid, name=name, type=type, price=price, description=description, instock=instock, addedby=addedby, productid=productid)
+            if modified_product == False:
+                flash("Failed to modify product", "danger")
+                return render_template('forms/admin-product-modify.html', products=product_details, form=form)
+            else:
+                flash("Product modified", "success")
+                return render_template('forms/admin-product-modify.html', products=modified_product, form=form)
         else:
-            flash("Product modified", "success")
-            return render_template('forms/admin-product-modify.html', products=modified_product, form=AdminProductAdd(request.form))
+            flash("Invalid inputs provided", "danger")
+            return render_template('forms/admin-product-modify.html', products=modified_product, form=form)
 
 @app.route('/admin/offers', methods=['GET'])
 def all_offers():
@@ -193,20 +221,61 @@ def add_offer():
     if request.method == 'GET':
         return render_template('forms/admin-offer-add.html', form=AdminOfferAdd(request.form))
     elif request.method == 'POST':
-        productid = request.form.get('productid')
-        discount = request.form.get('discount')
-        description = request.form.get('description')
-        fromd = request.form.get('fromd')
-        tod = request.form.get('to')
-        addedby = session['userid']
+        form = AdminOfferAdd(request.form)
+        if form.validate():
+            productid = request.form.get('productid')
+            discount = request.form.get('discount')
+            description = request.form.get('description')
+            fromd = request.form.get('fromd')
+            tod = request.form.get('to')
+            addedby = session['userid']
 
-        offer = offers.Offers()
-        new_offer = offer.add_new_offer(productid=productid, addedby=addedby, discount=discount, description=description, fromd=fromd, tod=tod)
-        if new_offer == False:
-            flash("Failed to add new offer", "danger")
+            offer = offers.Offers()
+            new_offer = offer.add_new_offer(productid=productid, addedby=addedby, discount=discount, description=description, fromd=fromd, tod=tod)
+            if new_offer == False:
+                flash("Failed to add new offer", "danger")
+                return render_template('pages/admin-offer-add.html', form=form)
+            else:
+                flash("Offer added")
+                return render_template('pages/admin-offer-add.html', form=form)
         else:
-            flash("Offer added")
-        return render_template('pages/admin-offer-add.html', form=AdminOfferAdd(request.form))
+            flash("Invalid inputs provided", "danger")
+            return render_template('pages/admin-offer-add.html', form=form)
+
+@app.route('/admin/offers/modify', methods=['GET', 'POST'])
+def modify_offer():
+    if 'loggedin' not in session or session['loggedin'] != True:
+        return redirect(url_for('login'))
+    offerid = request.args.get('id')
+    offer = offers.Offers()
+    offer_details = offer.get_offer_by_id(offerid=offerid)
+    if request.method == 'GET':
+        if offer_details == False:
+            flash("Offer Not Found")
+            redirect(url_for('all_offers'))
+        return render_template('forms/admin-offer-modify.html', offers=offer_details, form=AdminOfferAdd(request.form))
+    elif request.method == 'POST':
+        form = AdminOfferAdd(request.form)
+        if form.validate():
+            productid = request.form.get('productid')
+            discount = request.form.get('discount')
+            description = request.form.get('description')
+            fromd = request.form.get('fromd')
+            tod = request.form.get('to')
+            addedby = session['userid']
+            offerid = request.args.get('id')
+
+            offer = offers.Offers()
+            new_offer = offer.modify_offer(productid=productid, addedby=addedby, discount=discount, description=description, fromd=fromd, tod=tod, offerid=offerid)
+            if new_offer == False:
+                flash("Failed to modify new offer", "danger")
+                return render_template('pages/admin-offer-modify.html', offers=offer_details, form=form)
+            else:
+                flash("Offer modified", "success")
+                return render_template('pages/admin-offer-modify.html', offers=new_offer, form=form)
+        else:
+            flash("Invalid inputs provided", "danger")
+            return render_template('pages/admin-offer-modify.html', offers=new_offer, form=form)
 
 """
     Populates users table with random data

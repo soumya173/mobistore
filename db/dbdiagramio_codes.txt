@@ -13,7 +13,7 @@ Table users {
 
 Table products {
   productid int [pk, increment]
-  offerid int [default: null]
+  offerid int [default: 0]
   name varchar [not null]
   type varchar [not null]
   price int [not null]

@@ -6,7 +6,7 @@
       <div class="form-container">
         <div class="row">
           <div class="col-sm-12">
-            <h3 class="text-center">Add New Offer</h3>
+            <h3 class="text-center">Modify Offer</h3>
             <hr class="m-0" />
           </div>
         </div>
@@ -25,15 +25,15 @@
         <form method="post">
           {{ form.hidden_tag() }}
           <div class="form-label-group">
-            {{ form.productid(class_ = 'form-control', id='productid', placeholder = form.productid.label.text, required = true) }}
+            {{ form.productid(class_ = 'form-control', id='productid', placeholder = form.productid.label.text, required = true, value = offers.productid) }}
             <label for="productid">Product ID</label>
           </div>
           <div class="form-label-group">
-            {{ form.discount(class_ = 'form-control', id='discount', placeholder = form.discount.label.text, required = true) }}
+            {{ form.discount(class_ = 'form-control', id='discount', placeholder = form.discount.label.text, required = true, value = offers.discount) }}
             <label for="discount">Discount</label>
           </div>
           <div class="form-label-group">
-            {{ form.description(class_ = 'form-control', id='description', placeholder = form.description.label.text, required = true) }}
+            {{ form.description(class_ = 'form-control', id='description', placeholder = form.description.label.text, required = true, value = offers.description) }}
             <label for="description">Description</label>
           </div>
           <div class="form-label-group">
@@ -55,7 +55,7 @@
             <label for="to">To</label>
           </div>
           <!-- Material switch -->
-          <button class="btn btn-primary btn-block btn-login" type="submit">Add Offer</button>
+          <button class="btn btn-primary btn-block btn-login" type="submit">Modify Offer</button>
         </form>
       </div>
     </div>

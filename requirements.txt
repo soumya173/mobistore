@@ -3,3 +3,4 @@ Flask-WTF
 WTForms
 coverage
 flask-login
+email_validator

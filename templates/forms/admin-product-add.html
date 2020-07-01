@@ -23,6 +23,7 @@
           {% endwith %}
         </div>
         <form method="post">
+          {{ form.hidden_tag() }}
           <div class="form-label-group">
             {{ form.name(class_ = 'form-control', id='name', placeholder = form.name.label.text, required = true) }}
             <label for="name">Name</label>
