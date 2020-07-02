@@ -6,7 +6,7 @@ class AdminProfileForm(FlaskForm):
     firstname = TextField('Firstname', validators=[DataRequired(), Length(min=2, max=25)])
     lastname = TextField('Lastname', validators=[DataRequired(), Length(min=2, max=25)])
     email = TextField('Email', validators=[DataRequired(), Email()])
-    mobile = IntegerField('Mobile', validators=[DataRequired(), NumberRange(min=8, max=10)])
+    mobile = TextField('Mobile', validators=[DataRequired(), Length(min=8, max=10)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=40)])
     confirm = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
 
@@ -14,7 +14,13 @@ class AdminUserAdd(FlaskForm):
     firstname = TextField('Firstname', validators=[DataRequired(), Length(min=2, max=25)])
     lastname = TextField('Lastname', validators=[DataRequired(), Length(min=2, max=25)])
     email = TextField('Email', validators=[DataRequired(), Email()])
-    mobile = IntegerField('Mobile', validators=[DataRequired(), NumberRange(min=8, max=10)])
+    mobile = TextField('Mobile', validators=[DataRequired(), Length(min=8, max=10)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=40)])
+
+class AdminUserModify(FlaskForm):
+    firstname = TextField('Firstname', validators=[DataRequired(), Length(min=2, max=25)])
+    lastname = TextField('Lastname', validators=[DataRequired(), Length(min=2, max=25)])
+    mobile = TextField('Mobile', validators=[DataRequired(), Length(min=8, max=10)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=40)])
 
 class AdminProductAdd(FlaskForm):

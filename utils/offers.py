@@ -61,11 +61,11 @@ class Offers():
         res = self.db.execute(query)
         if res:
             # Verify the offer got created
-            getquery = "SELECT * FROM offers WHERE `productid`='{}' AND `addedby`='{}' AND `description`='{}' AND `instock`='{}' AND `fromd`='{}' AND `tod`='{}'".format(
+            getquery = "SELECT * FROM offers WHERE `productid`='{}' AND `addedby`='{}' AND `description`='{}' AND `discount`='{}' AND `from`='{}' AND `to`='{}'".format(
                     productid,
                     addedby,
                     description,
-                    instock,
+                    discount,
                     fromd,
                     tod)
             output = self.db.fetch(getquery)
@@ -90,7 +90,7 @@ class Offers():
     def modify_offer(self, productid, addedby, discount, description, fromd, tod, offerid):
         # TODO: Validate if offer exists
         # Modify offer
-        query = "UPDATE offers SET `productid`={}, `addedby`='{}', `discount`='{}', `description`='{}', `fromd`='{}', `tod`={} WHERE offerid={}".format(
+        query = "UPDATE offers SET `productid`={}, `addedby`='{}', `discount`='{}', `description`='{}', `from`='{}', `to`='{}' WHERE offerid={}".format(
                     productid,
                     addedby,
                     discount,
@@ -101,7 +101,7 @@ class Offers():
         res = self.db.execute(query)
         if res:
             # Verify that the product modified
-            getquery = "SELECT * FROM offers WHERE `productid`='{}' AND `addedby`='{}' AND `discount`='{}' AND `description`='{}' AND `fromd`='{}' AND `tod`='{}' AND `productid`={}".format(
+            getquery = "SELECT * FROM offers WHERE `productid`='{}' AND `addedby`='{}' AND `discount`='{}' AND `description`='{}' AND `from`='{}' AND `to`='{}'".format(
                     productid,
                     addedby,
                     discount,

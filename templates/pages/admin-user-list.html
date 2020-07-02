@@ -52,14 +52,29 @@
             <td>{{ user.type }}</td>
             <td>
               <div class="btn-group mr-2" role="group" aria-label="First group">
-                <button type="button" class="btn btn-info"><i class="fa fa-pencil" aria-hidden="true"></i></button>
-                <button type="button" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                <a href="{{ url_for('modify_user') }}?id={{ user.userid }}" class="btn btn-info"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                <a href="#" data-href="{{ url_for('delete_user') }}?id={{ user.userid }}" data-toggle="modal" data-target="#confirm-delete" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></a>
               </div>
             </td>
-            <!-- <td><button class="btn btn-link"><i class="fa fa-pencil" aria-hidden="true"></i></button></td> -->
           </tr>
         {% endfor %}
       </tbody>
     </table>
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            Delete user
+          </div>
+          <div class="modal-body">
+            Are you sure of this action?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <a class="btn btn-danger btn-ok">Delete</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 {% endblock %}

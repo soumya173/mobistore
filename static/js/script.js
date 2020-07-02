@@ -54,8 +54,26 @@
         target: "#sideNav",
     });
 
-    $('#datetimepickerfrom').datetimepicker();
-    $('#datetimepickerto').datetimepicker();
+    $('#datetimepickerfrom').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss',
+        defaultDate: new Date()
+    });
+    $('#datetimepickerto').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss',
+        defaultDate: new Date(),
+    	useCurrent: false
+    });
+
+    $("#datetimepickerfrom").on("dp.change", function (e) {
+        $('#datetimepickerto').data("DateTimePicker").minDate(e.date);
+    });
+    $("#datetimepickerto").on("dp.change", function (e) {
+        $('#datetimepickerfrom').data("DateTimePicker").maxDate(e.date);
+    });
+
+    $('#confirm-delete').on('show.bs.modal', function(e) {
+        $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+    });
 
     $('#sidebarCollapse').click(function () {
         if ( $('#sidebar-wrapper').css('margin-left') == '0px' ) {

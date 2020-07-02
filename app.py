@@ -132,6 +132,54 @@ def add_user():
             flash("Invalid inputs provided", "danger")
             return render_template('forms/admin-user-add.html', form=form)
 
+@app.route('/admin/users/modify', methods=['GET', 'POST'])
+def modify_user():
+    if 'loggedin' not in session or session['loggedin'] != True:
+        return redirect(url_for('login'))
+    userid = request.args.get('id')
+    user = users.Users()
+    user_details = user.get_user_by_id(userid=userid)
+    if request.method == 'GET':
+        if user_details == False:
+            flash("User Not Found")
+            redirect(url_for('all_users'))
+        return render_template('forms/admin-user-modify.html', users=user_details, form=AdminUserModify(request.form))
+    if request.method == 'POST':
+        form = AdminUserModify(request.form)
+        if form.validate():
+            firstname = request.form.get('firstname')
+            lastname = request.form.get('lastname')
+            mobile = request.form.get('mobile')
+            password = request.form.get('password')
+            type = "admin"
+
+            user = users.Users()
+            modified_user = user.modify_user(password=password, firstname=firstname, lastname=lastname, mobile=mobile, type=type, userid=userid)
+            if modified_user == False:
+                flash("Failed to modify user", "danger")
+                return render_template('forms/admin-user-modify.html', users=user_details, form=form)
+            else:
+                flash("User modified", "success")
+                return render_template('forms/admin-user-modify.html', users=modified_user, form=form)
+        else:
+            flash("Invalid inputs provided", "danger")
+            flash(form.errors, "danger")
+            return render_template('forms/admin-user-modify.html', users=user_details, form=form)
+
+@app.route('/admin/users/delete', methods=['GET'])
+def delete_user():
+    if 'loggedin' not in session or session['loggedin'] != True:
+        return redirect(url_for('login'))
+    userid = request.args.get('id')
+    user = users.Users()
+    user_details = user.delete_user_by_id(userid=userid)
+    if user_details == False:
+        flash("Failed to delete user", "danger")
+        return redirect(url_for('all_users'))
+    else:
+        flash("User deleted", "success")
+        return redirect(url_for('all_users'))
+
 @app.route('/admin/products', methods=['GET'])
 def all_products():
     if 'loggedin' not in session or session['loggedin'] != True:
@@ -204,7 +252,21 @@ def modify_product():
                 return render_template('forms/admin-product-modify.html', products=modified_product, form=form)
         else:
             flash("Invalid inputs provided", "danger")
-            return render_template('forms/admin-product-modify.html', products=modified_product, form=form)
+            return render_template('forms/admin-product-modify.html', products=product_details, form=form)
+
+@app.route('/admin/products/delete', methods=['GET'])
+def delete_product():
+    if 'loggedin' not in session or session['loggedin'] != True:
+        return redirect(url_for('login'))
+    productid = request.args.get('id')
+    product = products.Products()
+    product_details = product.delete_product_by_id(productid=productid)
+    if product_details == False:
+        flash("Failed to delete product", "danger")
+        return redirect(url_for('all_products'))
+    else:
+        flash("Product deleted", "success")
+        return redirect(url_for('all_products'))
 
 @app.route('/admin/offers', methods=['GET'])
 def all_offers():
@@ -227,20 +289,20 @@ def add_offer():
             discount = request.form.get('discount')
             description = request.form.get('description')
             fromd = request.form.get('fromd')
-            tod = request.form.get('to')
+            tod = request.form.get('tod')
             addedby = session['userid']
 
             offer = offers.Offers()
             new_offer = offer.add_new_offer(productid=productid, addedby=addedby, discount=discount, description=description, fromd=fromd, tod=tod)
             if new_offer == False:
                 flash("Failed to add new offer", "danger")
-                return render_template('pages/admin-offer-add.html', form=form)
+                return render_template('forms/admin-offer-add.html', form=form)
             else:
-                flash("Offer added")
-                return render_template('pages/admin-offer-add.html', form=form)
+                flash("Offer added", "success")
+                return render_template('forms/admin-offer-add.html', form=form)
         else:
             flash("Invalid inputs provided", "danger")
-            return render_template('pages/admin-offer-add.html', form=form)
+            return render_template('forms/admin-offer-add.html', form=form)
 
 @app.route('/admin/offers/modify', methods=['GET', 'POST'])
 def modify_offer():
@@ -251,7 +313,7 @@ def modify_offer():
     offer_details = offer.get_offer_by_id(offerid=offerid)
     if request.method == 'GET':
         if offer_details == False:
-            flash("Offer Not Found")
+            flash("Offer Not Found", "danger")
             redirect(url_for('all_offers'))
         return render_template('forms/admin-offer-modify.html', offers=offer_details, form=AdminOfferAdd(request.form))
     elif request.method == 'POST':
@@ -261,7 +323,7 @@ def modify_offer():
             discount = request.form.get('discount')
             description = request.form.get('description')
             fromd = request.form.get('fromd')
-            tod = request.form.get('to')
+            tod = request.form.get('tod')
             addedby = session['userid']
             offerid = request.args.get('id')
 
@@ -269,13 +331,27 @@ def modify_offer():
             new_offer = offer.modify_offer(productid=productid, addedby=addedby, discount=discount, description=description, fromd=fromd, tod=tod, offerid=offerid)
             if new_offer == False:
                 flash("Failed to modify new offer", "danger")
-                return render_template('pages/admin-offer-modify.html', offers=offer_details, form=form)
+                return render_template('forms/admin-offer-modify.html', offers=offer_details, form=form)
             else:
                 flash("Offer modified", "success")
-                return render_template('pages/admin-offer-modify.html', offers=new_offer, form=form)
+                return render_template('forms/admin-offer-modify.html', offers=new_offer, form=form)
         else:
             flash("Invalid inputs provided", "danger")
-            return render_template('pages/admin-offer-modify.html', offers=new_offer, form=form)
+            return render_template('forms/admin-offer-modify.html', offers=new_offer, form=form)
+
+@app.route('/admin/offers/delete', methods=['GET'])
+def delete_offer():
+    if 'loggedin' not in session or session['loggedin'] != True:
+        return redirect(url_for('login'))
+    offerid = request.args.get('id')
+    offer = offers.Offers()
+    offer_details = offer.delete_offer_by_id(offerid=offerid)
+    if offer_details == False:
+        flash("Failed to delete offer", "danger")
+        return redirect(url_for('all_offers'))
+    else:
+        flash("Offer deleted", "success")
+        return redirect(url_for('all_offers'))
 
 """
     Populates users table with random data

@@ -132,11 +132,10 @@ class Users():
         res = self.db.execute(query)
         if res:
             # Verify that the user modified
-            getquery = "SELECT `userid`, `firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified` FROM users WHERE `userid`='{}' AND `firstname`='{}' AND `lastname`='{}' AND `email`='{}' AND `mobile`='{}' AND `type`='{}'".format(
+            getquery = "SELECT `userid`, `firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified` FROM users WHERE `userid`='{}' AND `firstname`='{}' AND `lastname`='{}' AND `mobile`='{}' AND `type`='{}'".format(
                         userid,
                         firstname,
                         lastname,
-                        email,
                         mobile,
                         type)
             output = self.db.fetch(getquery)

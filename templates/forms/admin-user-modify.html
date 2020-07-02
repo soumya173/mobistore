@@ -1,0 +1,49 @@
+{% extends 'layouts/admin-layout.html' %}
+{% block title %}Add Product | Admin{% endblock %}
+{% block content %}
+  <div class="row h-100 align-items-center">
+    <div class="col-sm-12">
+      <div class="form-container">
+        <div class="row">
+          <div class="col-sm-12">
+            <h3 class="text-center">Modify User</h3>
+            <hr class="m-0" />
+          </div>
+        </div>
+        <div class="error-notification">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            	{% for category, message in messages %}
+                <div class="alert alert-{{ category }} fade show">
+                  <a class="close" data-dismiss="alert">&times;</a>
+                  {{ message }}
+                </div>
+	            {% endfor %}
+            {% endif %}
+          {% endwith %}
+        </div>
+        <form method="post">
+          {{ form.hidden_tag() }}
+          <div class="form-label-group">
+            {{ form.firstname(class_ = 'form-control', id='firstname', placeholder = form.firstname.label.text, required = true, value = users.firstname) }}
+            <label for="firstname">First Name</label>
+          </div>
+          <div class="form-label-group">
+            {{ form.lastname(class_ = 'form-control', id='lastname', placeholder = form.lastname.label.text, required = true, value = users.lastname) }}
+            <label for="lastname">Last Name</label>
+          </div>
+          <div class="form-label-group">
+            {{ form.mobile(class_ = 'form-control', id='mobile', placeholder = form.mobile.label.text, required = true, value = users.mobile) }}
+            <label for="mobile">Mobile</label>
+          </div>
+          <div class="form-label-group">
+            {{ form.password(class_ = 'form-control', id='password', placeholder = form.password.label.text, required = true) }}
+            <label for="password">Password</label>
+          </div>
+          <!-- Material switch -->
+          <button class="btn btn-primary btn-block btn-login" type="submit">Modify User</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
