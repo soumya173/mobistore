@@ -131,18 +131,18 @@
     var cur_pos = $(this).scrollTop() + 200;
 
     nav_sections.each(function() {
-      var top = $(this).offset().top,
-        bottom = top + $(this).outerHeight();
+      // var top = $(this).offset().top,
+      //   bottom = top + $(this).outerHeight();
 
-      if (cur_pos >= top && cur_pos <= bottom) {
-        if (cur_pos <= bottom) {
-          main_nav.find('li').removeClass('menu-active');
-        }
-        main_nav.find('a[href="#' + $(this).attr('id') + '"]').parent('li').addClass('menu-active');
-      }
-      if (cur_pos < 300) {
-        $(".nav-menu li:first").addClass('menu-active');
-      }
+      // if (cur_pos >= top && cur_pos <= bottom) {
+      //   if (cur_pos <= bottom) {
+      //     main_nav.find('li').removeClass('menu-active');
+      //   }
+      //   main_nav.find('a[href="' + $(this).attr('id') + '"]').parent('li').addClass('menu-active');
+      // }
+      // if (cur_pos < 300) {
+      //   $(".nav-menu li:first").addClass('menu-active');
+      // }
     });
   });
 

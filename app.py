@@ -27,11 +27,17 @@ app.config.from_object('config')
 #----------------------------------------------------------------------------#
 @app.route('/')
 def home():
-    return render_template('layouts/main.home.html')
+    return render_template('pages/main-launch-page.html')
+
+@app.route('/products')
+def main_products():
+    product = products.Products()
+    all_products = product.get_all_product()
+    return render_template('pages/main-products-list.html', products=all_products)
 
 @app.route('/about')
 def about():
-    return render_template('layouts/developer.about.html')
+    return render_template('layouts/developer-about.html')
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def login():
