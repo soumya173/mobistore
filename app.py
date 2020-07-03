@@ -2,9 +2,11 @@
 # Imports
 #----------------------------------------------------------------------------#
 
-from flask import Flask, render_template, request, jsonify, session, flash, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session, flash, redirect, url_for, send_from_directory
+from werkzeug.utils import secure_filename
 import logging
 from logging import Formatter, FileHandler
+import os
 
 from utils import users, products, offers
 from forms import *
@@ -25,7 +27,7 @@ app.config.from_object('config')
 #----------------------------------------------------------------------------#
 @app.route('/')
 def home():
-    return render_template('pages/placeholder.home.html')
+    return render_template('layouts/main.home.html')
 
 @app.route('/about')
 def about():
@@ -180,6 +182,10 @@ def delete_user():
         flash("User deleted", "success")
         return redirect(url_for('all_users'))
 
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 @app.route('/admin/products', methods=['GET'])
 def all_products():
     if 'loggedin' not in session or session['loggedin'] != True:
@@ -187,6 +193,9 @@ def all_products():
     product = products.Products()
     all_products = product.get_all_product()
     return render_template('pages/admin-product-list.html', products=all_products)
+
+def allowed_file(fname):
+    return '.' in fname and fname.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 @app.route('/admin/products/add', methods=['GET', 'POST'])
 def add_product():
@@ -204,6 +213,18 @@ def add_product():
             description = request.form.get('description')
             instock = 1 if request.form.get('instock') == 'on' else 0
             addedby = session['userid']
+
+            if 'file' in request.files:
+                file = request.files['file']
+                if file.filename == '':
+                    flash("No selected file", "danger")
+                    return render_template('forms/admin-product-add.html', form=form)
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                else:
+                    flash("File type not supported", "danger")
+                    return render_template('forms/admin-product-add.html', form=form)
 
             product = products.Products()
             all_products = product.add_new_product(offerid=offerid, name=name, type=type, price=price, description=description, instock=instock, addedby=addedby)
