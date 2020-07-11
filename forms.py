@@ -28,11 +28,12 @@ class AdminProductAdd(FlaskForm):
     type = TextField('Type', validators=[DataRequired(), Length(min=2, max=20)])
     description = TextField('Description', validators=[DataRequired(), Length(min=2, max=40)])
     price = IntegerField('Price', validators=[DataRequired(),])
-    offerid = IntegerField('Offer Id', validators=[DataRequired(),])
+    offerid = IntegerField('Offer Id', validators=[])
     file = FileField('Image File')
+    labels = TextField('Labels', validators=[])
 
 class AdminOfferAdd(FlaskForm):
-    productid = IntegerField('productid', validators=[DataRequired(),])
+    # productid = IntegerField('productid', validators=[DataRequired(),])
     discount = IntegerField('discount', validators=[DataRequired(), NumberRange(min=0, max=100)])
     description = TextField('Description', validators=[DataRequired(), Length(min=2, max=40)])
 

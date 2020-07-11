@@ -49,27 +49,29 @@ class Products():
             - List Obj with all details the newly created product
             - False
     """
-    def add_new_product(self, offerid, name, type, price, description, instock, addedby):
+    def add_new_product(self, offerid, name, type, price, description, instock, addedby, labels):
         # TODO: Validate duplicate product before create
         # Create product
-        query = "INSERT INTO products (`offerid`, `name`, `type`, `price`, `description`, `instock`, `created`, `modified`, `addedby`) VALUES('{}', '{}', '{}', '{}', '{}', '{}', now(), now(), '{}')".format(
+        query = "INSERT INTO products (`offerid`, `name`, `type`, `price`, `description`, `instock`, `created`, `modified`, `addedby`, `labels`) VALUES('{}', '{}', '{}', '{}', '{}', '{}', now(), now(), '{}', '{}')".format(
                     offerid,
                     name,
                     type,
                     price,
                     description,
                     instock,
-                    addedby)
+                    addedby,
+                    labels)
         res = self.db.execute(query)
         if res:
             # Verify the product got created
-            getquery = "SELECT * FROM products WHERE `name`='{}' AND `price`='{}' AND `description`='{}' AND `instock`='{}' AND `type`='{}' AND `addedby`='{}'".format(
+            getquery = "SELECT * FROM products WHERE `name`='{}' AND `price`='{}' AND `description`='{}' AND `instock`='{}' AND `type`='{}' AND `addedby`='{}' AND `labels`='{}'".format(
                     name,
                     price,
                     description,
                     instock,
                     type,
-                    addedby)
+                    addedby,
+                    labels)
             output = self.db.fetch(getquery)
             if len(output) == 1:
                 return output[0]
@@ -90,10 +92,10 @@ class Products():
             - List Obj with the details of modified product
             - False
     """
-    def modify_product(self, offerid, name, type, price, description, instock, addedby, productid):
+    def modify_product(self, offerid, name, type, price, description, instock, addedby, labels, productid):
         # TODO: Validate if product exists
         # Modify product
-        query = "UPDATE products SET `offerid`={}, `name`='{}', `type`='{}', `price`='{}', `description`='{}', `instock`={}, `modified`=now(), `addedby`={} WHERE productid={}".format(
+        query = "UPDATE products SET `offerid`={}, `name`='{}', `type`='{}', `price`='{}', `description`='{}', `instock`={}, `modified`=now(), `addedby`={}, `labels`='{}' WHERE productid={}".format(
                     offerid,
                     name,
                     type,
@@ -101,11 +103,12 @@ class Products():
                     description,
                     instock,
                     addedby,
+                    labels,
                     productid)
         res = self.db.execute(query)
         if res:
             # Verify that the product modified
-            getquery = "SELECT * FROM products WHERE `offerid`='{}' AND `name`='{}' AND `type`='{}' AND `price`='{}' AND `description`='{}' AND `instock`='{}' AND `addedby`='{}' AND `productid`={}".format(
+            getquery = "SELECT * FROM products WHERE `offerid`='{}' AND `name`='{}' AND `type`='{}' AND `price`='{}' AND `description`='{}' AND `instock`='{}' AND `addedby`='{}' AND `productid`={}  AND `labels`='{}'".format(
                     offerid,
                     name,
                     type,
@@ -113,7 +116,8 @@ class Products():
                     description,
                     instock,
                     addedby,
-                    productid)
+                    productid,
+                    labels)
             output = self.db.fetch(getquery)
             if len(output) == 1:
                 return output[0]

@@ -41,8 +41,12 @@
             <label for="price">Price</label>
           </div>
           <div class="form-label-group">
-            {{ form.offerid(class_ = 'form-control', id='offerid', placeholder = form.offerid.label.text, required = true, value = products.offerid) }}
+            {{ form.offerid(class_ = 'form-control', id='offerid', placeholder = form.offerid.label.text, value = products.offerid) }}
             <label for="offerid">Offer Id</label>
+          </div>
+          <div class="form-label-group">
+            {{ form.labels(class_ = 'form-control', id='labels', placeholder = form.labels.label.text, value = products.labels) }}
+            <label for="labels">Labels</label>
           </div>
           <div class="form-label-group text-center">
             <input type="checkbox" name="instock" checked data-toggle="toggle" data-on="In Stock" data-off="Out Of Stock" data-onstyle="success" data-offstyle="danger">

@@ -38,6 +38,14 @@
               <a href="{{ url_for('modify_product') }}?id={{ product.productid }}">{{ product.name }}</a>
             </h4>
             <h5><i class="fa fa-inr" aria-hidden="true"></i> {{ product.price }}</h5>
+            {% if product.labels is not none %}
+              <h3>
+              {% set all_labels = product.labels.split(',') %}
+              {% for label in all_labels %}
+                <span class="badge badge-warning">{{ label }}</span>
+              {% endfor %}
+              </h3>
+            {% endif %}
             <p class="card-text">{{ product.description }}</p>
           </div>
           <div class="card-footer">

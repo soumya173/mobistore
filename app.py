@@ -108,8 +108,8 @@ def profile():
 def all_users():
     if 'loggedin' not in session or session['loggedin'] != True:
         return redirect(url_for('login'))
-    offer = users.Users()
-    all_users = offer.get_all_user()
+    user = users.Users()
+    all_users = user.get_all_user()
     return render_template('pages/admin-user-list.html', users=all_users)
 
 @app.route('/admin/users/add', methods=['GET', 'POST'])
@@ -215,6 +215,7 @@ def add_product():
             offerid = request.form.get('offerid')
             name = request.form.get('name')
             type = request.form.get('type')
+            labels = request.form.get('labels') if request.form.get('labels') is not None else ""
             price = request.form.get('price')
             description = request.form.get('description')
             instock = 1 if request.form.get('instock') == 'on' else 0
@@ -222,18 +223,16 @@ def add_product():
 
             if 'file' in request.files:
                 file = request.files['file']
-                if file.filename == '':
-                    flash("No selected file", "danger")
-                    return render_template('forms/admin-product-add.html', form=form)
-                if file and allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                else:
-                    flash("File type not supported", "danger")
-                    return render_template('forms/admin-product-add.html', form=form)
+                if file.filename != '':
+                    if file and allowed_file(file.filename):
+                        filename = secure_filename(file.filename)
+                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    else:
+                        flash("File type not supported", "danger")
+                        return render_template('forms/admin-product-add.html', form=form)
 
             product = products.Products()
-            all_products = product.add_new_product(offerid=offerid, name=name, type=type, price=price, description=description, instock=instock, addedby=addedby)
+            all_products = product.add_new_product(offerid=offerid, name=name, type=type, price=price, description=description, instock=instock, addedby=addedby, labels=labels)
             if all_products == False:
                 flash("Failed to add new product", "danger")
                 return render_template('forms/admin-product-add.html', form=form)
@@ -263,6 +262,7 @@ def modify_product():
             offerid = 0 if request.form.get('offerid') == 'None' else request.form.get('offerid')
             name = request.form.get('name')
             type = request.form.get('type')
+            labels = request.form.get('labels') if request.form.get('labels') is not None else ""
             price = request.form.get('price')
             description = request.form.get('description')
             instock = 1 if request.form.get('instock') == 'on' else 0
@@ -270,7 +270,7 @@ def modify_product():
             productid = request.args.get('id')
 
             product = products.Products()
-            modified_product = product.modify_product(offerid=offerid, name=name, type=type, price=price, description=description, instock=instock, addedby=addedby, productid=productid)
+            modified_product = product.modify_product(offerid=offerid, name=name, type=type, price=price, description=description, instock=instock, addedby=addedby, labels=labels, productid=productid)
             if modified_product == False:
                 flash("Failed to modify product", "danger")
                 return render_template('forms/admin-product-modify.html', products=product_details, form=form)
@@ -312,7 +312,6 @@ def add_offer():
     elif request.method == 'POST':
         form = AdminOfferAdd(request.form)
         if form.validate():
-            productid = request.form.get('productid')
             discount = request.form.get('discount')
             description = request.form.get('description')
             fromd = request.form.get('fromd')
@@ -320,7 +319,7 @@ def add_offer():
             addedby = session['userid']
 
             offer = offers.Offers()
-            new_offer = offer.add_new_offer(productid=productid, addedby=addedby, discount=discount, description=description, fromd=fromd, tod=tod)
+            new_offer = offer.add_new_offer(addedby=addedby, discount=discount, description=description, fromd=fromd, tod=tod)
             if new_offer == False:
                 flash("Failed to add new offer", "danger")
                 return render_template('forms/admin-offer-add.html', form=form)
@@ -346,7 +345,6 @@ def modify_offer():
     elif request.method == 'POST':
         form = AdminOfferAdd(request.form)
         if form.validate():
-            productid = request.form.get('productid')
             discount = request.form.get('discount')
             description = request.form.get('description')
             fromd = request.form.get('fromd')
@@ -355,7 +353,7 @@ def modify_offer():
             offerid = request.args.get('id')
 
             offer = offers.Offers()
-            new_offer = offer.modify_offer(productid=productid, addedby=addedby, discount=discount, description=description, fromd=fromd, tod=tod, offerid=offerid)
+            new_offer = offer.modify_offer(addedby=addedby, discount=discount, description=description, fromd=fromd, tod=tod, offerid=offerid)
             if new_offer == False:
                 flash("Failed to modify new offer", "danger")
                 return render_template('forms/admin-offer-modify.html', offers=offer_details, form=form)
@@ -405,10 +403,21 @@ def populate_db():
         query = "INSERT INTO users (`password`, `firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified`) VALUES('{}', '{}', '{}', '{}', '{}', '{}', now(), now())".format(password, fname, lname, email, mobile, typ)
         res = handler.execute(query)
 
-    # Populating products table
+    # Populating offers table
     getquery = "SELECT `userid` FROM users LIMIT 1"
     output = handler.fetch(getquery)
     addedby = output[0]['userid']
+    for i in range(20):
+        description = ''.join([random.choice(string.ascii_lowercase) for _ in range(20)])
+        discount = ''.join([random.choice(string.digits) for _ in range(2)])
+
+        query = "INSERT INTO offers (`addedby`, `discount`, `description`, `from`, `to`) VALUES('{}', '{}', '{}', now(), now())".format(addedby, discount, description)
+        res = handler.execute(query)
+
+    # Populating products table
+    getquery = "SELECT `offerid` FROM offers LIMIT 1"
+    output = handler.fetch(getquery)
+    offerid = output[0]['offerid']
     for i in range(20):
         name = ''.join([random.choice(string.ascii_lowercase) for _ in range(10)])
         typ = ''.join([random.choice(string.ascii_lowercase) for _ in range(5)])
@@ -416,19 +425,9 @@ def populate_db():
         description = ''.join([random.choice(string.ascii_lowercase) for _ in range(20)])
         instock = 1
 
-        query = "INSERT INTO products (`name`, `type`, `price`, `description`, `instock`, `created`, `modified`, `addedby`) VALUES('{}', '{}', '{}', '{}', '{}', now(), now(), '{}')".format(name, typ, price, description, instock, addedby)
+        query = "INSERT INTO products (`name`, `type`, `price`, `description`, `instock`, `created`, `modified`, `addedby`, `offerid`) VALUES('{}', '{}', '{}', '{}', '{}', now(), now(), '{}', '{}')".format(name, typ, price, description, instock, addedby, offerid)
         res = handler.execute(query)
 
-    # Populating offers table
-    getquery = "SELECT `productid` FROM products LIMIT 1"
-    output = handler.fetch(getquery)
-    productid = output[0]['productid']
-    for i in range(20):
-        description = ''.join([random.choice(string.ascii_lowercase) for _ in range(20)])
-        discount = ''.join([random.choice(string.digits) for _ in range(2)])
-
-        query = "INSERT INTO offers (`productid`, `addedby`, `discount`, `description`, `from`, `to`) VALUES('{}', '{}', '{}', '{}', now(), now())".format(productid, addedby, discount, description)
-        res = handler.execute(query)
     return jsonify({'message': 'DB populated'}), 200
 
 # Error handlers.

@@ -33,7 +33,7 @@
       <thead class="thead-dark">
         <tr>
           <th scope="col">Offer ID</th>
-          <th scope="col">Product ID</th>
+          <!-- <th scope="col">Product ID</th> -->
           <th scope="col">From</th>
           <th scope="col">To</th>
           <th scope="col">Discount</th>
@@ -45,7 +45,7 @@
         {% for offer in offers %}
           <tr>
             <th scope="row">{{ offer.offerid }}</th>
-            <td>{{ offer.productid }}</td>
+            <!-- <td></td> -->
             <td>{{ offer.from }}</td>
             <td>{{ offer.to }}</td>
             <td>{{ offer.discount }} %</td>

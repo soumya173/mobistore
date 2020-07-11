@@ -10,7 +10,7 @@ DEBUG = True
 # https://randomkeygen.com/
 SECRET_KEY = '421B4BB2CE6F1C97F7167BC987D31'
 
-UPLOAD_FOLDER = os.path.join('static', 'img')
+UPLOAD_FOLDER = os.path.join('static', 'img', 'uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # Connect to the database

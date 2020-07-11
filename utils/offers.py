@@ -38,7 +38,6 @@ class Offers():
     """
         Add a new offer with all the details provided
         Params:
-            - productid
             - addedby
             - discount
             - description
@@ -48,11 +47,11 @@ class Offers():
             - List Obj with all details the newly created offer
             - False
     """
-    def add_new_offer(self, productid, addedby, discount, description, fromd, tod):
+    # def add_new_offer(self, productid, addedby, discount, description, fromd, tod):
+    def add_new_offer(self, addedby, discount, description, fromd, tod):
         # TODO: Validate duplicate offer before create
         # Create offer
-        query = "INSERT INTO offers (`productid`, `addedby`, `discount`, `description`, `from`, `to`) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
-                    productid,
+        query = "INSERT INTO offers (`addedby`, `discount`, `description`, `from`, `to`) VALUES('{}', '{}', '{}', '{}', '{}')".format(
                     addedby,
                     discount,
                     description,
@@ -61,8 +60,7 @@ class Offers():
         res = self.db.execute(query)
         if res:
             # Verify the offer got created
-            getquery = "SELECT * FROM offers WHERE `productid`='{}' AND `addedby`='{}' AND `description`='{}' AND `discount`='{}' AND `from`='{}' AND `to`='{}'".format(
-                    productid,
+            getquery = "SELECT * FROM offers WHERE `addedby`='{}' AND `description`='{}' AND `discount`='{}' AND `from`='{}' AND `to`='{}'".format(
                     addedby,
                     description,
                     discount,
@@ -76,7 +74,6 @@ class Offers():
     """
         Modifies an existing offer
         Params:
-            - productid
             - addedby
             - discount
             - description
@@ -87,11 +84,11 @@ class Offers():
             - List Obj with the details of modified offer
             - False
     """
-    def modify_offer(self, productid, addedby, discount, description, fromd, tod, offerid):
+    def modify_offer(self, addedby, discount, description, fromd, tod, offerid):
         # TODO: Validate if offer exists
         # Modify offer
-        query = "UPDATE offers SET `productid`={}, `addedby`='{}', `discount`='{}', `description`='{}', `from`='{}', `to`='{}' WHERE offerid={}".format(
-                    productid,
+        query = "UPDATE offers SET `addedby`='{}', `discount`='{}', `description`='{}', `from`='{}', `to`='{}' WHERE offerid={}".format(
+                    # productid,
                     addedby,
                     discount,
                     description,
@@ -100,9 +97,8 @@ class Offers():
                     offerid)
         res = self.db.execute(query)
         if res:
-            # Verify that the product modified
-            getquery = "SELECT * FROM offers WHERE `productid`='{}' AND `addedby`='{}' AND `discount`='{}' AND `description`='{}' AND `from`='{}' AND `to`='{}'".format(
-                    productid,
+            # Verify that the offer modified
+            getquery = "SELECT * FROM offers WHERE `addedby`='{}' AND `discount`='{}' AND `description`='{}' AND `from`='{}' AND `to`='{}'".format(
                     addedby,
                     discount,
                     description,
