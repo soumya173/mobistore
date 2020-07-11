@@ -63,6 +63,7 @@
           <a href="{{ url_for('add_user') }}" class="list-group-item list-group-item-action list-group-item-secondary {{ 'active' if request.endpoint == 'add_user' }}"><i class="fa fa-plus" aria-hidden="true"></i>Add User</a>
         </div>
         <!-- <a href="#" class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'users' }}"><i class="fa fa-group" aria-hidden="true"></i>Users</a> -->
+        <a href="{{ url_for('all_images') }}" class="list-group-item list-group-item-action"><i class="fa fa-image"></i>Images</a>
         <a href="{{ url_for('about') }}" class="list-group-item list-group-item-action" target="_blank"><i class="fa fa-wrench"></i>Dev Support</a>
         <a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action"><i class="fa fa-power-off" aria-hidden="true"></i>Log Out</a>
       </div>

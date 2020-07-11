@@ -298,6 +298,14 @@ def delete_product():
         flash("Product deleted", "success")
         return redirect(url_for('all_products'))
 
+@app.route('/admin/images', methods=['GET'])
+def all_images():
+    if 'loggedin' not in session or session['loggedin'] != True:
+        return redirect(url_for('login'))
+    image = images.Images()
+    all_images = image.get_all_image()
+    return render_template('pages/admin-image-list.html', images=all_images)
+
 @app.route('/admin/offers', methods=['GET'])
 def all_offers():
     if 'loggedin' not in session or session['loggedin'] != True:

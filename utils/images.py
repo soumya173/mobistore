@@ -13,7 +13,7 @@ class Images():
             - List Obj with all details of offer
             - Empty list if none found
     """
-    def get_all_images(self):
+    def get_all_image(self):
         # Fetch all images
         query = 'SELECT * FROM images;'
         output = self.db.fetch(query)
