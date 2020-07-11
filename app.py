@@ -8,7 +8,7 @@ import logging
 from logging import Formatter, FileHandler
 import os
 
-from utils import users, products, offers
+from utils import users, products, offers, images
 from forms import *
 
 # Remove when testing is done
@@ -221,22 +221,25 @@ def add_product():
             instock = 1 if request.form.get('instock') == 'on' else 0
             addedby = session['userid']
 
-            if 'file' in request.files:
-                file = request.files['file']
-                if file.filename != '':
-                    if file and allowed_file(file.filename):
-                        filename = secure_filename(file.filename)
-                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                    else:
-                        flash("File type not supported", "danger")
-                        return render_template('forms/admin-product-add.html', form=form)
-
             product = products.Products()
             all_products = product.add_new_product(offerid=offerid, name=name, type=type, price=price, description=description, instock=instock, addedby=addedby, labels=labels)
             if all_products == False:
                 flash("Failed to add new product", "danger")
                 return render_template('forms/admin-product-add.html', form=form)
             else:
+                if 'file' in request.files:
+                    files = request.files.getlist('file')
+                    for file in files:
+                        if file.filename != '':
+                            if file and allowed_file(file.filename):
+                                filename = "{}_{}".format(all_products['productid'], secure_filename(file.filename))
+                                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                                image = images.Images()
+                                new_image = image.add_new_image(all_products['productid'], url_for('uploaded_file', filename=filename))
+                                if new_image == False:
+                                    flash("Failed update image url in db", "danger")
+                            else:
+                                flash("File type not supported", "danger")
                 flash("Product added", "success")
                 return render_template('forms/admin-product-add.html', form=form)
         else:

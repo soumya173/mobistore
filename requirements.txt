@@ -4,3 +4,4 @@ WTForms
 coverage
 flask-login
 email_validator
+mysql-connector-python

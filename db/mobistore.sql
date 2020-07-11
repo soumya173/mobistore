@@ -7,7 +7,7 @@ CREATE TABLE `users` (
   `mobile` bigint DEFAULT null,
   `type` varchar(255) NOT NULL,
   `created` timestamp NOT NULL,
-  `modified` timestamp DEFAULT (now())
+  `modified` timestamp DEFAULT now()
 );
 
 CREATE TABLE `products` (
@@ -19,7 +19,7 @@ CREATE TABLE `products` (
   `description` text DEFAULT null,
   `instock` boolean NOT NULL,
   `created` timestamp,
-  `modified` timestamp DEFAULT (now()),
+  `modified` timestamp DEFAULT now(),
   `addedby` int,
   `labels` varchar(255) DEFAULT null
 );

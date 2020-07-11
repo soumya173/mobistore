@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import TextField, PasswordField, IntegerField, FileField
+from wtforms import TextField, PasswordField, IntegerField, FileField, MultipleFileField
 from wtforms.validators import DataRequired, EqualTo, Length, NumberRange, Email
 
 class AdminProfileForm(FlaskForm):
@@ -29,11 +29,10 @@ class AdminProductAdd(FlaskForm):
     description = TextField('Description', validators=[DataRequired(), Length(min=2, max=40)])
     price = IntegerField('Price', validators=[DataRequired(),])
     offerid = IntegerField('Offer Id', validators=[])
-    file = FileField('Image File')
+    file = MultipleFileField('Image File(s)')
     labels = TextField('Labels', validators=[])
 
 class AdminOfferAdd(FlaskForm):
-    # productid = IntegerField('productid', validators=[DataRequired(),])
     discount = IntegerField('discount', validators=[DataRequired(), NumberRange(min=0, max=100)])
     description = TextField('Description', validators=[DataRequired(), Length(min=2, max=40)])
 
