@@ -37,7 +37,7 @@
             <h3>{{ image.productid }}</h3>
           </div>
           <div class="card-footer">
-            <a href="#" data-href="{{ url_for('delete_product') }}?id={{ image.productid }}" data-toggle="modal" data-target="#confirm-delete" class="btn btn-danger btn-block"><i class="fa fa-trash" aria-hidden="true"></i></a>
+            <a href="#" data-href="{{ url_for('delete_image') }}?id={{ image.imageid }}" data-toggle="modal" data-target="#confirm-delete" class="btn btn-danger btn-block"><i class="fa fa-trash" aria-hidden="true"></i></a>
           </div>
         </div>
       </div>

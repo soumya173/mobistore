@@ -12,7 +12,6 @@ CREATE TABLE `users` (
 
 CREATE TABLE `products` (
   `productid` int PRIMARY KEY AUTO_INCREMENT,
-  `offerid` int DEFAULT 0,
   `name` varchar(255) NOT NULL,
   `type` varchar(255) NOT NULL,
   `price` int NOT NULL,
@@ -32,6 +31,7 @@ CREATE TABLE `images` (
 
 CREATE TABLE `offers` (
   `offerid` int PRIMARY KEY AUTO_INCREMENT,
+  `productid` int,
   `addedby` int,
   `discount` int DEFAULT 0,
   `description` text DEFAULT null,
@@ -39,11 +39,11 @@ CREATE TABLE `offers` (
   `to` timestamp NOT NULL
 );
 
-ALTER TABLE `products` ADD FOREIGN KEY (`offerid`) REFERENCES `offers` (`offerid`);
-
 ALTER TABLE `products` ADD FOREIGN KEY (`addedby`) REFERENCES `users` (`userid`);
 
 ALTER TABLE `images` ADD FOREIGN KEY (`productid`) REFERENCES `products` (`productid`);
+
+ALTER TABLE `offers` ADD FOREIGN KEY (`productid`) REFERENCES `products` (`productid`);
 
 ALTER TABLE `offers` ADD FOREIGN KEY (`addedby`) REFERENCES `users` (`userid`);
 

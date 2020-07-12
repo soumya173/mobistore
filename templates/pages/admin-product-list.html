@@ -32,18 +32,34 @@
     {% for product in products %}
       <div class="col-lg-4 col-md-6 mb-4">
         <div class="card h-100">
-          <a href="{{ url_for('modify_product') }}?id={{ product.productid }}"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+          {% for image in images if image.productid == product.productid %}
+            {% if loop.index == 1 %}
+              <a href="{{ url_for('modify_product') }}?id={{ product.productid }}"><img class="card-img-top" src="{{ image.url }}" alt=""></a>
+            {% endif %}
+          {% endfor %}
           <div class="card-body">
             <h4 class="card-title">
-              <a href="{{ url_for('modify_product') }}?id={{ product.productid }}">{{ product.name }}</a>
+              {{ product.productid }}: <a href="{{ url_for('modify_product') }}?id={{ product.productid }}">{{ product.name }}</a>
             </h4>
             <h5><i class="fa fa-inr" aria-hidden="true"></i> {{ product.price }}</h5>
+            <h5>
+              {% if product.instock == 1 %}
+                <span class="badge badge-success">In Stock</span>
+              {% else %}
+                <span class="badge badge-danger">Out Of Stock</span>
+              {% endif %}
+              {% for offer in offers if offer.productid == product.productid %}
+                {% if loop.index == 1 %}
+                  <span class="badge badge-warning">On Offer</span>
+                {% endif %}
+              {% endfor %}
+            </h5>
             {% if product.labels is not none %}
               <h3>
-              {% set all_labels = product.labels.split(',') %}
-              {% for label in all_labels %}
-                <span class="badge badge-warning">{{ label }}</span>
-              {% endfor %}
+                {% set all_labels = product.labels.split(',') %}
+                {% for label in all_labels %}
+                  <span class="badge badge-secondary">{{ label }}</span>
+                {% endfor %}
               </h3>
             {% endif %}
             <p class="card-text">{{ product.description }}</p>

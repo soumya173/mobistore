@@ -32,8 +32,12 @@ def home():
 @app.route('/products')
 def main_products():
     product = products.Products()
+    image = images.Images()
+    offer = offers.Offers()
     all_products = product.get_all_product()
-    return render_template('pages/main-products-list.html', products=all_products)
+    all_images = image.get_all_image()
+    all_offers = offer.get_all_offer()
+    return render_template('pages/main-products-list.html', products=all_products, images=all_images, offers=all_offers)
 
 @app.route('/about')
 def about():
@@ -192,16 +196,50 @@ def delete_user():
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+def allowed_file(fname):
+    return '.' in fname and fname.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+@app.route('/admin/images', methods=['GET'])
+def all_images():
+    if 'loggedin' not in session or session['loggedin'] != True:
+        return redirect(url_for('login'))
+    image = images.Images()
+    all_images = image.get_all_image()
+    return render_template('pages/admin-image-list.html', images=all_images)
+
+@app.route('/admin/images/delete', methods=['GET'])
+def delete_image():
+    if 'loggedin' not in session or session['loggedin'] != True:
+        return redirect(url_for('login'))
+    imageid = request.args.get('id')
+    image = images.Images()
+    image_details = image.get_image_by_id(imageid=imageid)
+    try:
+        if image_details != False:
+            os.remove(os.path.join('static', 'img', image_details['url'][1:]))
+    except Exception as e:
+        print(e)
+        flash("Failed to image from server", "danger")
+        return redirect(url_for('all_images'))
+    image_details = image.delete_image_by_id(imageid=imageid)
+    if image_details == False:
+        flash("Failed to delete image", "danger")
+        return redirect(url_for('all_images'))
+    else:
+        flash("image deleted", "success")
+        return redirect(url_for('all_images'))
+
 @app.route('/admin/products', methods=['GET'])
 def all_products():
     if 'loggedin' not in session or session['loggedin'] != True:
         return redirect(url_for('login'))
     product = products.Products()
+    image = images.Images()
+    offer = offers.Offers()
     all_products = product.get_all_product()
-    return render_template('pages/admin-product-list.html', products=all_products)
-
-def allowed_file(fname):
-    return '.' in fname and fname.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+    all_images = image.get_all_image()
+    all_offers = offer.get_all_offer()
+    return render_template('pages/admin-product-list.html', products=all_products, images=all_images, offers=all_offers)
 
 @app.route('/admin/products/add', methods=['GET', 'POST'])
 def add_product():
@@ -212,7 +250,6 @@ def add_product():
     if request.method == 'POST':
         form = AdminProductAdd(request.form)
         if form.validate():
-            offerid = request.form.get('offerid')
             name = request.form.get('name')
             type = request.form.get('type')
             labels = request.form.get('labels') if request.form.get('labels') is not None else ""
@@ -222,7 +259,7 @@ def add_product():
             addedby = session['userid']
 
             product = products.Products()
-            all_products = product.add_new_product(offerid=offerid, name=name, type=type, price=price, description=description, instock=instock, addedby=addedby, labels=labels)
+            all_products = product.add_new_product(name=name, type=type, price=price, description=description, instock=instock, addedby=addedby, labels=labels)
             if all_products == False:
                 flash("Failed to add new product", "danger")
                 return render_template('forms/admin-product-add.html', form=form)
@@ -243,6 +280,7 @@ def add_product():
                 flash("Product added", "success")
                 return render_template('forms/admin-product-add.html', form=form)
         else:
+            print(form.errors)
             flash("Invalid inputs provided", "danger")
             return render_template('forms/admin-product-add.html', form=form)
 
@@ -262,7 +300,6 @@ def modify_product():
     if request.method == 'POST':
         form = AdminProductAdd(request.form)
         if form.validate():
-            offerid = 0 if request.form.get('offerid') == 'None' else request.form.get('offerid')
             name = request.form.get('name')
             type = request.form.get('type')
             labels = request.form.get('labels') if request.form.get('labels') is not None else ""
@@ -273,11 +310,24 @@ def modify_product():
             productid = request.args.get('id')
 
             product = products.Products()
-            modified_product = product.modify_product(offerid=offerid, name=name, type=type, price=price, description=description, instock=instock, addedby=addedby, labels=labels, productid=productid)
+            modified_product = product.modify_product(name=name, type=type, price=price, description=description, instock=instock, addedby=addedby, labels=labels, productid=productid)
             if modified_product == False:
                 flash("Failed to modify product", "danger")
                 return render_template('forms/admin-product-modify.html', products=product_details, form=form)
             else:
+                if 'file' in request.files:
+                    files = request.files.getlist('file')
+                    for file in files:
+                        if file.filename != '':
+                            if file and allowed_file(file.filename):
+                                filename = "{}_{}".format(modified_product['productid'], secure_filename(file.filename))
+                                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                                image = images.Images()
+                                new_image = image.add_new_image(all_products['productid'], url_for('uploaded_file', filename=filename))
+                                if new_image == False:
+                                    flash("Failed update image url in db", "danger")
+                            else:
+                                flash("File type not supported", "danger")
                 flash("Product modified", "success")
                 return render_template('forms/admin-product-modify.html', products=modified_product, form=form)
         else:
@@ -298,14 +348,6 @@ def delete_product():
         flash("Product deleted", "success")
         return redirect(url_for('all_products'))
 
-@app.route('/admin/images', methods=['GET'])
-def all_images():
-    if 'loggedin' not in session or session['loggedin'] != True:
-        return redirect(url_for('login'))
-    image = images.Images()
-    all_images = image.get_all_image()
-    return render_template('pages/admin-image-list.html', images=all_images)
-
 @app.route('/admin/offers', methods=['GET'])
 def all_offers():
     if 'loggedin' not in session or session['loggedin'] != True:
@@ -323,6 +365,7 @@ def add_offer():
     elif request.method == 'POST':
         form = AdminOfferAdd(request.form)
         if form.validate():
+            productid = request.form.get('productid')
             discount = request.form.get('discount')
             description = request.form.get('description')
             fromd = request.form.get('fromd')
@@ -330,7 +373,7 @@ def add_offer():
             addedby = session['userid']
 
             offer = offers.Offers()
-            new_offer = offer.add_new_offer(addedby=addedby, discount=discount, description=description, fromd=fromd, tod=tod)
+            new_offer = offer.add_new_offer(productid=productid, addedby=addedby, discount=discount, description=description, fromd=fromd, tod=tod)
             if new_offer == False:
                 flash("Failed to add new offer", "danger")
                 return render_template('forms/admin-offer-add.html', form=form)
@@ -356,6 +399,7 @@ def modify_offer():
     elif request.method == 'POST':
         form = AdminOfferAdd(request.form)
         if form.validate():
+            productid = request.form.get('productid')
             discount = request.form.get('discount')
             description = request.form.get('description')
             fromd = request.form.get('fromd')
@@ -364,7 +408,7 @@ def modify_offer():
             offerid = request.args.get('id')
 
             offer = offers.Offers()
-            new_offer = offer.modify_offer(addedby=addedby, discount=discount, description=description, fromd=fromd, tod=tod, offerid=offerid)
+            new_offer = offer.modify_offer(productid=productid, addedby=addedby, discount=discount, description=description, fromd=fromd, tod=tod, offerid=offerid)
             if new_offer == False:
                 flash("Failed to modify new offer", "danger")
                 return render_template('forms/admin-offer-modify.html', offers=offer_details, form=form)

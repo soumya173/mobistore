@@ -33,6 +33,10 @@
             <label for="lastname">Last Name</label>
           </div>
           <div class="form-label-group">
+            <input class="form-control" id="email" name="email" placeholder="Email" readonly="" required="" type="text" value="{{ users.email }}">
+            <label for="email">Email</label>
+          </div>
+          <div class="form-label-group">
             {{ form.mobile(class_ = 'form-control', id='mobile', placeholder = form.mobile.label.text, required = true, value = users.mobile) }}
             <label for="mobile">Mobile</label>
           </div>

@@ -25,6 +25,10 @@
         <form method="post">
           {{ form.hidden_tag() }}
           <div class="form-label-group">
+            {{ form.productid(class_ = 'form-control', id='productid', placeholder = form.productid.label.text, required = true, value = offers.productid) }}
+            <label for="productid">Product ID</label>
+          </div>
+          <div class="form-label-group">
             {{ form.discount(class_ = 'form-control', id='discount', placeholder = form.discount.label.text, required = true, value = offers.discount) }}
             <label for="discount">Discount</label>
           </div>

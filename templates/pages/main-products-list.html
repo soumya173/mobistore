@@ -22,7 +22,11 @@
           <div class="card-columns">
             {% for product in products %}
               <div class="card">
-                <img class="card-img-top" src="https://ksassets.timeincuk.net/wp/uploads/sites/54/2019/03/Xiaomi-Mi-9-front-angled-top-left-1024x683.jpg" alt="Card image cap">
+                {% for image in images if image.productid == product.productid %}
+                  {% if loop.index == 1 %}
+                    <img class="card-img-top" src="{{ image.url }}" alt="Card image cap">
+                  {% endif %}
+                {% endfor %}
                 <div class="card-body">
                   <div class="row">
                     <div class="col-sm-6">
@@ -32,6 +36,11 @@
                       <h3 class="card-title"><i class="fa fa-inr mr-2"></i>{{ product.price }}</h3>
                     </div>
                   </div>
+                  {% for offer in offers if offer.productid == product.productid %}
+                    {% if loop.index == 1 %}
+                      <h5><span class="badge badge-warning">On Offer</span></h5>
+                    {% endif %}
+                  {% endfor %}
                   <p class="card-text">{{ product.description }}</p>
                 </div>
                 <div class="card-footer text-center">
