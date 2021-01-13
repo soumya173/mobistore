@@ -119,25 +119,23 @@ class Users():
             - List Obj with the details of modified user
             - False
     """
-    def modify_user(self, password, firstname, lastname, email, mobile, type, userid):
+    def modify_user(self, password, firstname, lastname, mobile, type, userid):
         # TODO: Validate if user exists
         # Modify user
-        query = "UPDATE users SET `password`='{}', `firstname`='{}', `lastname`='{}', `email`='{}', `mobile`='{}', `type`='{}', `modified`=now() WHERE userid={}".format(
+        query = "UPDATE users SET `password`='{}', `firstname`='{}', `lastname`='{}', `mobile`='{}', `type`='{}', `modified`=now() WHERE userid={}".format(
                         password,
                         firstname,
                         lastname,
-                        email,
                         mobile,
                         type,
                         userid)
         res = self.db.execute(query)
         if res:
             # Verify that the user modified
-            getquery = "SELECT `userid`, `firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified` FROM users WHERE `userid`='{}' AND `firstname`='{}' AND `lastname`='{}' AND `email`='{}' AND `mobile`='{}' AND `type`='{}'".format(
+            getquery = "SELECT `userid`, `firstname`, `lastname`, `email`, `mobile`, `type`, `created`, `modified` FROM users WHERE `userid`='{}' AND `firstname`='{}' AND `lastname`='{}' AND `mobile`='{}' AND `type`='{}'".format(
                         userid,
                         firstname,
                         lastname,
-                        email,
                         mobile,
                         type)
             output = self.db.fetch(getquery)

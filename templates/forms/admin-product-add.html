@@ -4,6 +4,12 @@
   <div class="row h-100 align-items-center">
     <div class="col-sm-12">
       <div class="form-container">
+        <div class="row">
+          <div class="col-sm-12">
+            <h3 class="text-center">Add New Product</h3>
+            <hr class="m-0" />
+          </div>
+        </div>
         <div class="error-notification">
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -16,7 +22,8 @@
             {% endif %}
           {% endwith %}
         </div>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
+          {{ form.hidden_tag() }}
           <div class="form-label-group">
             {{ form.name(class_ = 'form-control', id='name', placeholder = form.name.label.text, required = true) }}
             <label for="name">Name</label>
@@ -34,17 +41,16 @@
             <label for="price">Price</label>
           </div>
           <div class="form-label-group">
-            {{ form.offerid(class_ = 'form-control', id='offerid', placeholder = form.offerid.label.text, required = true) }}
-            <label for="offerid">Offer Id</label>
+            {{ form.file(class_ = 'form-control', id='file', placeholder = form.file.label.text) }}
           </div>
           <div class="form-label-group">
-            {{ form.addedby(class_ = 'form-control', id='addedby', placeholder = form.addedby.label.text, required = true) }}
-            <label for="addedby">Added By</label>
+            {{ form.labels(class_ = 'form-control', id='labels', placeholder = form.labels.label.text) }}
+            <label for="labels">Labels</label>
           </div>
-          <div class="form-label-group">
-            {{ form.instock(class_ = 'form-control', id='instock', placeholder = form.instock.label.text, required = true) }}
-            <label for="instock">In Stock</label>
+          <div class="form-label-group text-center">
+            <input type="checkbox" name="instock" checked data-toggle="toggle" data-on="In Stock" data-off="Out Of Stock" data-onstyle="success" data-offstyle="danger">
           </div>
+          <!-- Material switch -->
           <button class="btn btn-primary btn-block btn-login" type="submit">Add Product</button>
         </form>
       </div>

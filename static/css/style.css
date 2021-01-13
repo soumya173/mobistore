@@ -143,6 +143,24 @@
   margin: auto;
 }
 
+.error-notification, #sidebarCollapse {
+  margin-bottom: 10px;
+}
+
+.masthead {
+  height: 100vh;
+  width: 100%;
+  min-height: 500px;
+  background-image: url('https://source.unsplash.com/BtbjCFUvBXs/1920x1080');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.error-code {
+  font-size: 500%;
+}
+
 /* Fallback for Edge
 -------------------------------------------------- */
 

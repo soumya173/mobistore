@@ -1,6 +1,15 @@
-{% extends 'layouts/home.html' %}
+{% extends 'layouts/error-layout.html' %}
 {% block content %}
-  <h1>Something's wrong!</h1>
-  <p>Fortunately we are on the job, and you can just return home!</p>
-  <p><a href="{{url_for('index')}}">Back</a></p>
+  <header class="masthead">
+    <div class="container h-100">
+      <div class="row h-100 align-items-center">
+        <div class="col-12 text-center">
+          <h1 class="font-weight-light error-code">500</h1>
+          <h4>Internal Server Error</h4>
+          <p class="lead">We are very sorry for this situation.</p>
+          <p class="lead">Some suggetions: <a href="{{ url_for('home') }}">Home</a></p>
+        </div>
+      </div>
+    </div>
+  </header>
 {% endblock %}

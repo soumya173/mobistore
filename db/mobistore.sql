@@ -7,22 +7,20 @@ CREATE TABLE `users` (
   `mobile` bigint DEFAULT null,
   `type` varchar(255) NOT NULL,
   `created` timestamp NOT NULL,
-  `modified` timestamp,
-  CONSTRAINT email_unique UNIQUE (`email`),
-  CONSTRAINT mobile_unique UNIQUE (`mobile`)
+  `modified` timestamp DEFAULT now()
 );
 
 CREATE TABLE `products` (
   `productid` int PRIMARY KEY AUTO_INCREMENT,
-  `offerid` int DEFAULT null,
   `name` varchar(255) NOT NULL,
   `type` varchar(255) NOT NULL,
   `price` int NOT NULL,
   `description` text DEFAULT null,
   `instock` boolean NOT NULL,
   `created` timestamp,
-  `modified` timestamp ,
-  `addedby` int
+  `modified` timestamp DEFAULT now(),
+  `addedby` int,
+  `labels` varchar(255) DEFAULT null
 );
 
 CREATE TABLE `images` (

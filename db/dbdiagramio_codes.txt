@@ -13,7 +13,7 @@ Table users {
 
 Table products {
   productid int [pk, increment]
-  offerid int [default: null]
+  offerid int [default: 0, ref: - offers.offerid]
   name varchar [not null]
   type varchar [not null]
   price int [not null]
@@ -22,6 +22,7 @@ Table products {
   created timestamp
   modified timestamp [default: `now()`]
   addedby int [ref: > users.userid]
+  labels varchar [default: null]
 }
 
 Table images {
@@ -32,7 +33,6 @@ Table images {
 
 Table offers {
   offerid int [pk, increment]
-  productid int [ref: > products.productid]
   addedby int [ref: > users.userid]
   discount int [default: 0]
   description text [default: null]

@@ -1,0 +1,56 @@
+{% extends 'layouts/main-home-layout.html' %}
+{% block title %}GoraiTelecom | Products{% endblock %}
+{% block content %}
+  <!-- ======= Breadcrumbs Section ======= -->
+  <section class="breadcrumbs">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2>Our Products</h2>
+        <ol>
+          <li><a href="{{ url_for('home') }}">Home</a></li>
+          <li>Products</li>
+        </ol>
+      </div>
+    </div>
+  </section><!-- End Breadcrumbs Section -->
+
+  <section class="inner-page">
+    <div class="container-fluid">
+
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="card-columns">
+            {% for product in products %}
+              <div class="card">
+                {% for image in images if image.productid == product.productid %}
+                  {% if loop.index == 1 %}
+                    <img class="card-img-top" src="{{ image.url }}" alt="Card image cap">
+                  {% endif %}
+                {% endfor %}
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <h3 class="card-title">{{ product.name }}</h3>
+                    </div>
+                    <div class="col-sm-6 text-right">
+                      <h3 class="card-title"><i class="fa fa-inr mr-2"></i>{{ product.price }}</h3>
+                    </div>
+                  </div>
+                  {% for offer in offers if offer.productid == product.productid %}
+                    {% if loop.index == 1 %}
+                      <h5><span class="badge badge-warning">On Offer</span></h5>
+                    {% endif %}
+                  {% endfor %}
+                  <p class="card-text">{{ product.description }}</p>
+                </div>
+                <div class="card-footer text-center">
+                  <small class="{{ 'text-success' if product.instock==1 else 'text-danger' }}"><i class="fa fa-gift mr-2"></i>{{ 'Available' if product.instock==1 else 'Out Of Stock' }}</small>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

@@ -4,6 +4,12 @@
   <div class="row h-100 align-items-center">
     <div class="col-sm-12">
       <div class="form-container">
+        <div class="row">
+          <div class="col-sm-12">
+            <h3 class="text-center">Profile</h3>
+            <hr class="m-0" />
+          </div>
+        </div>
         <div class="error-notification">
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -21,6 +27,7 @@
           Last modified at: {{user.modified}}
         </div>
         <form method="post">
+          {{ form.hidden_tag() }}
           <div class="form-label-group">
             {{ form.firstname(class_ = 'form-control', id='firstName', placeholder = form.firstname.label.text, required = true, value = user.firstname) }}
             <label for="firstName">First Name</label>
