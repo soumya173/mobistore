@@ -1,31 +1,10 @@
 # mobistore
-A responsive online mobile store
+A fully responsive, interactive and user fiendly online mobile store with attractive admin panel to manage all the products, offers and many more.
+Backend fully designed on Python Flask and MySQL, Frontend developed with HTML, CSS, JQuery and stuffs.
 
-# Environment Details
-- Database
-  - MySQL
-- REST API
-  - Python Flask
-- Frontend
-  - HTML
-  - CSS
-  - Javascript / JQuery
+I created this peoject just for learning Python Flask and implement it to improve my skills in it. Please feel free to customize or reuse if needed. :)
 
-# Environment Setup
-Note1: A good internet connection is required to download the setup files if required
-
-Note2: Currently the process is manual, will try automating the setup later
-- Tasks
-  - Setup environment
-    - Start with setting up your favorite editor (I prefer Sublime text)
-  - Install packages
-    - MySQL Server
-    - Python 3.8 64bit
-    - Python Flask
-  - Setup Database
-    - Create a database named 'modistore' (Let's keep the name fixed)
-    - Import database files from ./db/ directory
-    - Start Flask REST server (will provide steps later)
-
-- Useful links
-  - https://dbdiagram.io/
+# Project Setup
+1. Fork the repo
+2. python3 setup.py install
+3. Start the flask app
